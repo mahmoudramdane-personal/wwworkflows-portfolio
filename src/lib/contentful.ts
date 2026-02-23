@@ -1,5 +1,5 @@
 import { createClient } from "contentful";
-import { Project, MediaAsset } from "./types";
+import { Project, MediaAsset, AboutPage, ContactPage } from "./types";
 
 const client =
   process.env.CONTENTFUL_SPACE_ID && process.env.CONTENTFUL_ACCESS_TOKEN
@@ -114,4 +114,83 @@ function mapBodyMedia(assets: any[] | undefined): MediaAsset[] {
     width: asset.fields.file.details?.image?.width,
     height: asset.fields.file.details?.image?.height,
   }));
+}
+
+export async function getAboutPage(): Promise<AboutPage> {
+  const fallback: AboutPage = {
+    title: "Studio",
+    intro: "WWWorkflows est un studio de Computational Design spécialisé dans les systèmes algorithmiques pour l'architecture et la construction. Nous développons des outils paramétriques qui compressent les délais de conception, absorbent les modifications tardives et font le lien entre géométrie digitale et fabrication physique.\n\nNotre travail couvre le design de façade, la planification de fabrication, l'automatisation paysagère et le conseil en processus digitaux. Nous collaborons avec des agences d'architecture, des promoteurs et des entreprises — en offrant du Computational Design as a Service.",
+    services: [
+      { title: "Systèmes de Façade", description: "Design paramétrique de façade, systèmes double peau, optimisation de panneaux et algorithmes de mur-rideau." },
+      { title: "Design Algorithmique", description: "Outils de design génératif, form-finding et scripts d'optimisation pour projets architecturaux." },
+      { title: "Planification de Fabrication", description: "Modèles prêts CNC, planification d'assemblage et workflows de fabrication digitale." },
+      { title: "Automatisation Digitale", description: "Automatisation de processus, rendu par lots, configurateurs et outils Grasshopper sur mesure." },
+    ],
+    tools: ["Rhino", "Grasshopper", "Revit", "Ladybug", "Python", "Hops", "Lumion", "Miro"],
+  };
+
+  if (!client) return fallback;
+
+  try {
+    const entries = await client.getEntries({
+      content_type: "aboutPage",
+      limit: 1,
+    });
+    if (!entries.items.length) return fallback;
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const item = entries.items[0] as any;
+    let services = fallback.services;
+    try {
+      if (item.fields.services) services = JSON.parse(item.fields.services);
+    } catch { /* use fallback */ }
+
+    return {
+      title: item.fields.title || fallback.title,
+      intro: item.fields.intro || fallback.intro,
+      body: item.fields.body,
+      services,
+      tools: item.fields.tools ? item.fields.tools.split(",").map((t: string) => t.trim()) : fallback.tools,
+    };
+  } catch {
+    return fallback;
+  }
+}
+
+export async function getContactPage(): Promise<ContactPage> {
+  const fallback: ContactPage = {
+    title: "Contact",
+    intro: "Pour toute demande de projet, consultation ou collaboration — contactez-nous.",
+    email: "hello@wwworkflows.com",
+    linkedinUrl: "https://linkedin.com",
+    linkedinLabel: "WWWorkflows",
+    instagramUrl: "https://instagram.com",
+    instagramLabel: "@wwworkflows",
+    footerNote: "Basé au Maroc. Projets à l'international.",
+  };
+
+  if (!client) return fallback;
+
+  try {
+    const entries = await client.getEntries({
+      content_type: "contactPage",
+      limit: 1,
+    });
+    if (!entries.items.length) return fallback;
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const item = entries.items[0] as any;
+    return {
+      title: item.fields.title || fallback.title,
+      intro: item.fields.intro || fallback.intro,
+      email: item.fields.email || fallback.email,
+      linkedinUrl: item.fields.linkedinUrl || fallback.linkedinUrl,
+      linkedinLabel: item.fields.linkedinLabel || fallback.linkedinLabel,
+      instagramUrl: item.fields.instagramUrl || fallback.instagramUrl,
+      instagramLabel: item.fields.instagramLabel || fallback.instagramLabel,
+      footerNote: item.fields.footerNote || fallback.footerNote,
+    };
+  } catch {
+    return fallback;
+  }
 }

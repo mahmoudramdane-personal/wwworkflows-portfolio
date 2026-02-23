@@ -33,10 +33,29 @@ export type Category =
   | "interior";
 
 export const CATEGORY_LABELS: Record<Category, string> = {
-  all: "All",
-  "facade-design": "Facade Design",
-  "algorithmic-systems": "Algorithmic Systems",
-  "fabrication-planning": "Fabrication Planning",
-  "landscape-urban": "Landscape & Urban",
-  interior: "Interior",
+  all: "Tous",
+  "facade-design": "Design de Façade",
+  "algorithmic-systems": "Systèmes Algorithmiques",
+  "fabrication-planning": "Planification de Fabrication",
+  "landscape-urban": "Paysage & Urbanisme",
+  interior: "Intérieur",
 };
+
+export interface AboutPage {
+  title: string;
+  intro: string;
+  body?: string;
+  services?: { title: string; description: string }[];
+  tools?: string[];
+}
+
+export interface ContactPage {
+  title: string;
+  intro?: string;
+  email?: string;
+  linkedinUrl?: string;
+  linkedinLabel?: string;
+  instagramUrl?: string;
+  instagramLabel?: string;
+  footerNote?: string;
+}

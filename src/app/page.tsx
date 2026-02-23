@@ -13,9 +13,9 @@ export default async function Home() {
           <br />
           <span className="text-neutral-400">as a Service</span>
         </h1>
-        <p className="mt-6 text-neutral-500 text-base md:text-lg max-w-2xl leading-relaxed">
-          Algorithmic systems, parametric facades, and digital fabrication
-          planning — from concept to construction.
+        <p className="mt-6 text-neutral-500 text-base md:text-lg max-w-2xl leading-relaxed font-[family-name:var(--font-space-mono)]">
+          Systèmes algorithmiques, façades paramétriques et planification de
+          fabrication digitale — du concept à la construction.
         </p>
       </section>
 

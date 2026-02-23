@@ -1,29 +1,54 @@
-export default function ContactPage() {
+import { getContactPage } from "@/lib/contentful";
+
+export default async function ContactPage() {
+  const contact = await getContactPage();
+
   return (
     <div className="max-w-[1400px] mx-auto px-6 md:px-12">
       <section className="pt-24 pb-16 md:pt-32 md:pb-20">
         <h1 className="text-3xl md:text-5xl font-bold tracking-tight text-neutral-900">
-          Contact
+          {contact.title}
         </h1>
       </section>
 
-      <section className="max-w-xl space-y-12 pb-24">
-        <p className="text-neutral-600 text-base leading-[1.8] tracking-wide">
-          For project inquiries, consultations, or collaborations — get in
-          touch.
-        </p>
+      <section className="max-w-xl space-y-12 pb-24 font-[family-name:var(--font-space-mono)]">
+        {contact.intro && (
+          <p className="text-neutral-600 text-sm leading-[1.9] tracking-wide">
+            {contact.intro}
+          </p>
+        )}
 
         <div className="space-y-6">
-          <ContactItem label="Email" value="hello@wwworkflows.com" href="mailto:hello@wwworkflows.com" />
-          <ContactItem label="LinkedIn" value="WWWorkflows" href="https://linkedin.com" />
-          <ContactItem label="Instagram" value="@wwworkflows" href="https://instagram.com" />
+          {contact.email && (
+            <ContactItem
+              label="Email"
+              value={contact.email}
+              href={`mailto:${contact.email}`}
+            />
+          )}
+          {contact.linkedinLabel && contact.linkedinUrl && (
+            <ContactItem
+              label="LinkedIn"
+              value={contact.linkedinLabel}
+              href={contact.linkedinUrl}
+            />
+          )}
+          {contact.instagramLabel && contact.instagramUrl && (
+            <ContactItem
+              label="Instagram"
+              value={contact.instagramLabel}
+              href={contact.instagramUrl}
+            />
+          )}
         </div>
 
-        <div className="border-t border-black/10 pt-8">
-          <p className="text-neutral-400 text-xs tracking-wide leading-relaxed">
-            Based in Morocco. Working internationally.
-          </p>
-        </div>
+        {contact.footerNote && (
+          <div className="border-t border-black/10 pt-8">
+            <p className="text-neutral-400 text-xs tracking-wide leading-relaxed">
+              {contact.footerNote}
+            </p>
+          </div>
+        )}
       </section>
     </div>
   );
