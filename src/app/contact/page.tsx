@@ -11,7 +11,7 @@ export default async function ContactPage() {
         </h1>
       </section>
 
-      <section className="max-w-xl space-y-12 pb-24 font-[family-name:var(--font-space-mono)]">
+      <section className="max-w-xl space-y-12 pb-24">
         {contact.intro && (
           <p className="text-neutral-600 text-sm leading-[1.9] tracking-wide">
             {contact.intro}

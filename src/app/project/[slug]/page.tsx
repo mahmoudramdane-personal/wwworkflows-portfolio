@@ -29,7 +29,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
         <div className="pt-8">
           <Link
             href="/"
-            className="text-neutral-400 text-xs tracking-[0.12em] uppercase hover:text-neutral-900 transition-colors duration-300 font-[family-name:var(--font-space-mono)]"
+            className="text-neutral-400 text-xs tracking-[0.12em] uppercase hover:text-neutral-900 transition-colors duration-300"
           >
             &larr; Retour aux projets
           </Link>
@@ -40,7 +40,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
           <h1 className="text-3xl md:text-5xl font-bold tracking-tight text-neutral-900">
             {project.title}
           </h1>
-          <p className="mt-4 text-neutral-500 text-base md:text-lg leading-relaxed font-[family-name:var(--font-space-mono)]">
+          <p className="mt-4 text-neutral-500 text-base md:text-lg leading-relaxed">
             {project.subtitle}
           </p>
         </section>
@@ -73,8 +73,8 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
           </div>
         </section>
 
-        {/* Body content — full width, Space Mono */}
-        <section className="mb-16 font-[family-name:var(--font-space-mono)]">
+        {/* Body content — full width */}
+        <section className="mb-16">
           <RichBody body={project.body} bodyMedia={project.bodyMedia} />
         </section>
 
@@ -102,7 +102,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
         <section className="border-t border-black/10 py-12 text-center">
           <Link
             href="/"
-            className="text-neutral-400 text-xs tracking-[0.12em] uppercase hover:text-neutral-900 transition-colors duration-300 font-[family-name:var(--font-space-mono)]"
+            className="text-neutral-400 text-xs tracking-[0.12em] uppercase hover:text-neutral-900 transition-colors duration-300"
           >
             Voir tous les projets &rarr;
           </Link>
@@ -114,7 +114,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
 
 function MetaItem({ label, value }: { label: string; value: string }) {
   return (
-    <div className="font-[family-name:var(--font-space-mono)]">
+    <div>
       <dt className="text-neutral-400 text-[10px] tracking-[0.15em] uppercase mb-1">
         {label}
       </dt>

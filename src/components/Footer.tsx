@@ -6,22 +6,19 @@ export default function Footer() {
     <footer className="border-t border-black/5 py-12 mt-24">
       <div className="max-w-[1400px] mx-auto px-6 md:px-12">
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-8">
-          {/* Logo + tagline */}
-          <div className="flex items-center gap-3">
+          {/* Logo */}
+          <Link href="/" className="group">
             <Image
               src="/logo.png"
               alt="WWWorkflows"
-              width={28}
-              height={16}
-              className="opacity-30"
+              width={32}
+              height={18}
+              className="opacity-25 transition-opacity duration-300 group-hover:opacity-50"
             />
-            <span className="text-neutral-300 text-xs tracking-[0.15em] uppercase font-[family-name:var(--font-space-mono)]">
-              WWWorkflows
-            </span>
-          </div>
+          </Link>
 
           {/* Nav */}
-          <nav className="flex items-center gap-6 font-[family-name:var(--font-space-mono)]">
+          <nav className="flex items-center gap-6">
             <Link
               href="/"
               className="text-neutral-400 text-xs tracking-[0.08em] uppercase hover:text-neutral-900 transition-colors duration-300"
@@ -43,8 +40,8 @@ export default function Footer() {
           </nav>
 
           {/* Copyright */}
-          <span className="text-neutral-300 text-[10px] tracking-[0.1em] font-[family-name:var(--font-space-mono)]">
-            &copy; {new Date().getFullYear()} WWWorkflows — Studio de Computational Design
+          <span className="text-neutral-300 text-[10px] tracking-[0.1em]">
+            &copy; {new Date().getFullYear()} WWWorkflows
           </span>
         </div>
       </div>

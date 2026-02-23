@@ -11,7 +11,7 @@ export default async function AboutPage() {
         </h1>
       </section>
 
-      <section className="max-w-3xl space-y-8 pb-24 font-[family-name:var(--font-space-mono)]">
+      <section className="max-w-3xl space-y-8 pb-24">
         {about.intro.split("\n\n").map((paragraph, i) => (
           <p
             key={i}
