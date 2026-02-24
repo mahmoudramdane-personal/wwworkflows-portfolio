@@ -28,6 +28,13 @@ export default async function ContactPage() {
               href={`mailto:${contact.email}`}
             />
           )}
+          {contact.phone && (
+            <ContactItem
+              label="Téléphone"
+              value={contact.phone}
+              href={`tel:${contact.phone.replace(/\s/g, "")}`}
+            />
+          )}
           {contact.linkedinLabel && contact.linkedinUrl && (
             <ContactItem
               label="LinkedIn"

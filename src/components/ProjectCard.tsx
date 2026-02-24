@@ -11,13 +11,21 @@ export default function ProjectCard({ project }: ProjectCardProps) {
     <Link href={`/project/${project.slug}`} className="group block">
       {/* Thumbnail */}
       <div className="relative aspect-[3/2] overflow-hidden bg-neutral-200">
-        <Image
-          src={project.thumbnail}
-          alt={project.title}
-          fill
-          className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
-          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-        />
+        {project.thumbnail ? (
+          <Image
+            src={project.thumbnail}
+            alt={project.title}
+            fill
+            className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+          />
+        ) : (
+          <div className="absolute inset-0 flex items-center justify-center">
+            <span className="text-neutral-400 text-xs tracking-[0.12em] uppercase">
+              Image à venir
+            </span>
+          </div>
+        )}
         {/* Hover overlay */}
         <div className="absolute inset-0 bg-white/0 transition-colors duration-500 group-hover:bg-white/10" />
       </div>

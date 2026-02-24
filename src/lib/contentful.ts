@@ -37,8 +37,12 @@ export async function getProjects(): Promise<Project[]> {
       category: item.fields.category,
       status: item.fields.status,
       collaborators: item.fields.collaborators || "",
-      thumbnail: `https:${item.fields.thumbnail.fields.file.url}`,
-      heroImage: `https:${item.fields.heroImage.fields.file.url}`,
+      thumbnail: item.fields.thumbnail?.fields?.file?.url
+        ? `https:${item.fields.thumbnail.fields.file.url}`
+        : undefined,
+      heroImage: item.fields.heroImage?.fields?.file?.url
+        ? `https:${item.fields.heroImage.fields.file.url}`
+        : undefined,
       body: item.fields.body,
       images: item.fields.projectImages?.map(
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -86,8 +90,12 @@ export async function getProjectBySlug(
       category: item.fields.category,
       status: item.fields.status,
       collaborators: item.fields.collaborators || "",
-      thumbnail: `https:${item.fields.thumbnail.fields.file.url}`,
-      heroImage: `https:${item.fields.heroImage.fields.file.url}`,
+      thumbnail: item.fields.thumbnail?.fields?.file?.url
+        ? `https:${item.fields.thumbnail.fields.file.url}`
+        : undefined,
+      heroImage: item.fields.heroImage?.fields?.file?.url
+        ? `https:${item.fields.heroImage.fields.file.url}`
+        : undefined,
       body: item.fields.body,
       images: item.fields.projectImages?.map(
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -241,6 +249,7 @@ export async function getContactPage(): Promise<ContactPage> {
     title: "Contact",
     intro: "Pour toute demande de projet, consultation ou collaboration — contactez-nous.",
     email: "mahmoud@wwworkflows.com",
+    phone: "+212 6 23 63 32 22",
     linkedinUrl: "https://www.linkedin.com/in/mahmoudramdane/",
     linkedinLabel: "Mahmoud Ramdane",
     instagramUrl: "https://www.instagram.com/wwworkflows",
@@ -263,6 +272,7 @@ export async function getContactPage(): Promise<ContactPage> {
       title: item.fields.title || fallback.title,
       intro: item.fields.intro || fallback.intro,
       email: item.fields.email || fallback.email,
+      phone: item.fields.phone || fallback.phone,
       linkedinUrl: item.fields.linkedinUrl || fallback.linkedinUrl,
       linkedinLabel: item.fields.linkedinLabel || fallback.linkedinLabel,
       instagramUrl: item.fields.instagramUrl || fallback.instagramUrl,

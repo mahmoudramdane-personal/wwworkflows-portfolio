@@ -65,14 +65,22 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
         {/* Hero image */}
         <section className="mb-12">
           <div className="relative aspect-[16/9] overflow-hidden bg-neutral-100">
-            <Image
-              src={project.heroImage}
-              alt={project.title}
-              fill
-              className="object-cover"
-              priority
-              sizes="(max-width: 1400px) 100vw, 1400px"
-            />
+            {project.heroImage ? (
+              <Image
+                src={project.heroImage}
+                alt={project.title}
+                fill
+                className="object-cover"
+                priority
+                sizes="(max-width: 1400px) 100vw, 1400px"
+              />
+            ) : (
+              <div className="absolute inset-0 flex items-center justify-center">
+                <span className="text-neutral-400 text-xs tracking-[0.12em] uppercase">
+                  Image à venir
+                </span>
+              </div>
+            )}
           </div>
         </section>
 

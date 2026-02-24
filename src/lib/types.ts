@@ -16,8 +16,8 @@ export interface Project {
   category: Category;
   status: string;
   collaborators?: string;
-  thumbnail: string;
-  heroImage: string;
+  thumbnail?: string;
+  heroImage?: string;
   body: string;
   images: string[];
   bodyMedia: MediaAsset[];
@@ -64,6 +64,7 @@ export interface ContactPage {
   title: string;
   intro?: string;
   email?: string;
+  phone?: string;
   linkedinUrl?: string;
   linkedinLabel?: string;
   instagramUrl?: string;
