@@ -1,5 +1,5 @@
 import { createClient } from "contentful";
-import { Project, MediaAsset, AboutPage, ContactPage } from "./types";
+import { Project, MediaAsset, AboutPage, ContactPage, Article } from "./types";
 
 const client =
   process.env.CONTENTFUL_SPACE_ID && process.env.CONTENTFUL_ACCESS_TOKEN
@@ -115,6 +115,85 @@ function mapBodyMedia(assets: any[] | undefined): MediaAsset[] {
     height: asset.fields.file.details?.image?.height,
   }));
 }
+
+// --- Articles ---
+
+const fallbackArticles: Article[] = [
+  {
+    title: "Pourquoi le Computational Design change la donne en architecture",
+    slug: "computational-design-architecture",
+    excerpt: "Le Computational Design n'est pas un gadget technologique — c'est une refonte fondamentale de la manière dont on conçoit, coordonne et livre des projets architecturaux.",
+    body: "## Le problème\n\nContenu placeholder.",
+    category: "Insights",
+    date: "2025-06-15",
+    thumbnail: "https://placehold.co/1200x675/f1f1f1/999?text=Article",
+    order: 1,
+  },
+];
+
+export async function getArticles(): Promise<Article[]> {
+  if (!client) return fallbackArticles;
+
+  try {
+    const entries = await client.getEntries({
+      content_type: "article",
+      order: ["-fields.date"] as const,
+    });
+
+    if (!entries.items.length) return fallbackArticles;
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return entries.items.map((item: any) => ({
+      title: item.fields.title,
+      slug: item.fields.slug,
+      excerpt: item.fields.excerpt,
+      body: item.fields.body,
+      category: item.fields.category || "",
+      date: item.fields.date,
+      thumbnail: item.fields.thumbnail
+        ? `https:${item.fields.thumbnail.fields.file.url}`
+        : "https://placehold.co/1200x675/f1f1f1/999?text=Article",
+      order: item.fields.order || 0,
+    }));
+  } catch {
+    return fallbackArticles;
+  }
+}
+
+export async function getArticleBySlug(slug: string): Promise<Article | null> {
+  if (!client) return fallbackArticles.find((a) => a.slug === slug) || null;
+
+  try {
+    const entries = await client.getEntries({
+      content_type: "article",
+      "fields.slug": slug,
+      limit: 1,
+    });
+
+    if (!entries.items.length) {
+      return fallbackArticles.find((a) => a.slug === slug) || null;
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const item = entries.items[0] as any;
+    return {
+      title: item.fields.title,
+      slug: item.fields.slug,
+      excerpt: item.fields.excerpt,
+      body: item.fields.body,
+      category: item.fields.category || "",
+      date: item.fields.date,
+      thumbnail: item.fields.thumbnail
+        ? `https:${item.fields.thumbnail.fields.file.url}`
+        : "https://placehold.co/1200x675/f1f1f1/999?text=Article",
+      order: item.fields.order || 0,
+    };
+  } catch {
+    return fallbackArticles.find((a) => a.slug === slug) || null;
+  }
+}
+
+// --- About ---
 
 export async function getAboutPage(): Promise<AboutPage> {
   const fallback: AboutPage = {

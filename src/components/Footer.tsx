@@ -32,6 +32,12 @@ export default function Footer() {
               Studio
             </Link>
             <Link
+              href="/articles"
+              className="text-neutral-400 text-xs tracking-[0.08em] uppercase hover:text-neutral-900 transition-colors duration-300"
+            >
+              Articles
+            </Link>
+            <Link
               href="/contact"
               className="text-neutral-400 text-xs tracking-[0.08em] uppercase hover:text-neutral-900 transition-colors duration-300"
             >

@@ -41,6 +41,17 @@ export const CATEGORY_LABELS: Record<Category, string> = {
   interior: "Intérieur",
 };
 
+export interface Article {
+  title: string;
+  slug: string;
+  excerpt: string;
+  body: string;
+  category?: string;
+  date: string;
+  thumbnail?: string;
+  order?: number;
+}
+
 export interface AboutPage {
   title: string;
   intro: string;
