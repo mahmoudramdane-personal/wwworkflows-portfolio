@@ -11,7 +11,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "WWWorkflows — Studio de Computational Design",
+  title: "WWWorkflows - Studio de Design Computationnel",
   description:
     "Computational Design as a Service. Systèmes algorithmiques de façade, planification paramétrique de fabrication et automatisation digitale pour l'architecture.",
 };
