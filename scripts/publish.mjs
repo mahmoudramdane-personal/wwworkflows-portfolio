@@ -17,7 +17,8 @@
 //       diagram.gif
 //       process.mp4
 
-import { createClient } from "contentful-management";
+import contentfulManagement from "contentful-management";
+const { createClient } = contentfulManagement;
 import matter from "gray-matter";
 import sharp from "sharp";
 import fs from "fs";
