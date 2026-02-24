@@ -36,22 +36,22 @@ export default function RichBody({ body, bodyMedia }: RichBodyProps) {
               remarkPlugins={[remarkGfm]}
               components={{
                 h1: ({ children }) => (
-                  <h1 className="text-2xl md:text-3xl font-bold text-neutral-900 mt-12 mb-4">
+                  <h1 className="text-4xl md:text-5xl font-bold text-neutral-900 mt-16 mb-6">
                     {children}
                   </h1>
                 ),
                 h2: ({ children }) => (
-                  <h2 className="text-xl md:text-2xl font-bold text-neutral-900 mt-10 mb-4">
+                  <h2 className="text-3xl md:text-4xl font-bold text-neutral-900 mt-14 mb-6">
                     {children}
                   </h2>
                 ),
                 h3: ({ children }) => (
-                  <h3 className="text-lg md:text-xl font-bold text-neutral-900 mt-8 mb-3">
+                  <h3 className="text-2xl md:text-3xl font-bold text-neutral-900 mt-12 mb-5">
                     {children}
                   </h3>
                 ),
                 p: ({ children }) => (
-                  <p className="text-neutral-600 text-sm leading-[1.9] tracking-wide mb-4">
+                  <p className="text-neutral-600 text-lg md:text-xl leading-[1.8] tracking-wide mb-6">
                     {children}
                   </p>
                 ),
@@ -62,12 +62,12 @@ export default function RichBody({ body, bodyMedia }: RichBodyProps) {
                   <em className="italic text-neutral-700">{children}</em>
                 ),
                 ul: ({ children }) => (
-                  <ul className="list-disc pl-6 space-y-2 text-neutral-600 text-sm leading-[1.9] tracking-wide mb-4">
+                  <ul className="list-disc pl-8 space-y-3 text-neutral-600 text-lg md:text-xl leading-[1.8] tracking-wide mb-6">
                     {children}
                   </ul>
                 ),
                 ol: ({ children }) => (
-                  <ol className="list-decimal pl-6 space-y-2 text-neutral-600 text-sm leading-[1.9] tracking-wide mb-4">
+                  <ol className="list-decimal pl-8 space-y-3 text-neutral-600 text-lg md:text-xl leading-[1.8] tracking-wide mb-6">
                     {children}
                   </ol>
                 ),
@@ -75,16 +75,16 @@ export default function RichBody({ body, bodyMedia }: RichBodyProps) {
                   <li className="text-neutral-600">{children}</li>
                 ),
                 blockquote: ({ children }) => (
-                  <blockquote className="border-l-2 border-neutral-300 pl-6 py-2 text-neutral-500 italic text-sm leading-[1.9]">
+                  <blockquote className="border-l-3 border-neutral-300 pl-8 py-3 text-neutral-500 italic text-lg md:text-xl leading-[1.8]">
                     {children}
                   </blockquote>
                 ),
                 hr: () => (
-                  <hr className="border-t border-black/10 my-10" />
+                  <hr className="border-t border-black/10 my-14" />
                 ),
                 table: ({ children }) => (
-                  <div className="overflow-x-auto mb-4">
-                    <table className="w-full text-sm text-left border-collapse">
+                  <div className="overflow-x-auto mb-6">
+                    <table className="w-full text-lg text-left border-collapse">
                       {children}
                     </table>
                   </div>
@@ -95,17 +95,17 @@ export default function RichBody({ body, bodyMedia }: RichBodyProps) {
                   </thead>
                 ),
                 th: ({ children }) => (
-                  <th className="py-2 pr-4 text-xs tracking-[0.1em] uppercase text-neutral-400">
+                  <th className="py-3 pr-6 text-base tracking-[0.06em] uppercase text-neutral-400">
                     {children}
                   </th>
                 ),
                 td: ({ children }) => (
-                  <td className="py-2 pr-4 text-neutral-600">{children}</td>
+                  <td className="py-3 pr-6 text-neutral-600 text-lg">{children}</td>
                 ),
                 a: ({ href, children }) => (
                   <a
                     href={href}
-                    className="text-neutral-900 underline underline-offset-2 hover:text-neutral-600 transition-colors"
+                    className="text-neutral-900 underline underline-offset-4 hover:text-neutral-600 transition-colors"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
