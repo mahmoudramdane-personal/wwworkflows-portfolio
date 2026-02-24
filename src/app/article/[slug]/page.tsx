@@ -4,6 +4,9 @@ import Image from "next/image";
 import Link from "next/link";
 import RichBody from "@/components/RichBody";
 
+export const revalidate = 60;
+export const dynamicParams = true;
+
 interface ArticlePageProps {
   params: Promise<{ slug: string }>;
 }

@@ -1,5 +1,7 @@
 import { getAboutPage } from "@/lib/contentful";
 
+export const revalidate = 60;
+
 export default async function AboutPage() {
   const about = await getAboutPage();
 

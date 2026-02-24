@@ -2,6 +2,8 @@ import { getArticles } from "@/lib/contentful";
 import Image from "next/image";
 import Link from "next/link";
 
+export const revalidate = 60;
+
 export default async function ArticlesPage() {
   const articles = await getArticles();
 

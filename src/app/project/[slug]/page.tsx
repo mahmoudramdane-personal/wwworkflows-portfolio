@@ -5,6 +5,9 @@ import Link from "next/link";
 import { CATEGORY_LABELS, Category } from "@/lib/types";
 import RichBody from "@/components/RichBody";
 
+export const revalidate = 60;
+export const dynamicParams = true;
+
 interface ProjectPageProps {
   params: Promise<{ slug: string }>;
 }
