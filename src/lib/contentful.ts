@@ -161,10 +161,10 @@ export async function getContactPage(): Promise<ContactPage> {
   const fallback: ContactPage = {
     title: "Contact",
     intro: "Pour toute demande de projet, consultation ou collaboration — contactez-nous.",
-    email: "hello@wwworkflows.com",
-    linkedinUrl: "https://linkedin.com",
-    linkedinLabel: "WWWorkflows",
-    instagramUrl: "https://instagram.com",
+    email: "mahmoud@wwworkflows.com",
+    linkedinUrl: "https://www.linkedin.com/in/mahmoudramdane/",
+    linkedinLabel: "Mahmoud Ramdane",
+    instagramUrl: "https://www.instagram.com/wwworkflows",
     instagramLabel: "@wwworkflows",
     footerNote: "Basé au Maroc. Projets à l'international.",
   };

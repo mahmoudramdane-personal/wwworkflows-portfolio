@@ -21,8 +21,8 @@ export default function Header() {
           <Image
             src="/logo.png"
             alt="WWWorkflows"
-            width={44}
-            height={24}
+            width={56}
+            height={30}
             className="transition-opacity duration-300 group-hover:opacity-60"
           />
         </Link>

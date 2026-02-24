@@ -36,22 +36,22 @@ export default function RichBody({ body, bodyMedia }: RichBodyProps) {
               remarkPlugins={[remarkGfm]}
               components={{
                 h1: ({ children }) => (
-                  <h1 className="text-4xl md:text-5xl font-bold text-neutral-900 mt-16 mb-6">
+                  <h1 className="text-4xl md:text-5xl font-bold text-neutral-900 mt-12 mb-4">
                     {children}
                   </h1>
                 ),
                 h2: ({ children }) => (
-                  <h2 className="text-3xl md:text-4xl font-bold text-neutral-900 mt-14 mb-6">
+                  <h2 className="text-3xl md:text-4xl font-bold text-neutral-900 mt-10 mb-4">
                     {children}
                   </h2>
                 ),
                 h3: ({ children }) => (
-                  <h3 className="text-2xl md:text-3xl font-bold text-neutral-900 mt-12 mb-5">
+                  <h3 className="text-2xl md:text-3xl font-bold text-neutral-900 mt-8 mb-3">
                     {children}
                   </h3>
                 ),
                 p: ({ children }) => (
-                  <p className="text-neutral-600 text-lg md:text-xl leading-[1.8] tracking-wide mb-6">
+                  <p className="text-neutral-600 text-lg md:text-xl leading-[1.5] tracking-wide mb-5">
                     {children}
                   </p>
                 ),
@@ -62,12 +62,12 @@ export default function RichBody({ body, bodyMedia }: RichBodyProps) {
                   <em className="italic text-neutral-700">{children}</em>
                 ),
                 ul: ({ children }) => (
-                  <ul className="list-disc pl-8 space-y-3 text-neutral-600 text-lg md:text-xl leading-[1.8] tracking-wide mb-6">
+                  <ul className="list-disc pl-8 space-y-3 text-neutral-600 text-lg md:text-xl leading-[1.5] tracking-wide mb-5">
                     {children}
                   </ul>
                 ),
                 ol: ({ children }) => (
-                  <ol className="list-decimal pl-8 space-y-3 text-neutral-600 text-lg md:text-xl leading-[1.8] tracking-wide mb-6">
+                  <ol className="list-decimal pl-8 space-y-3 text-neutral-600 text-lg md:text-xl leading-[1.5] tracking-wide mb-5">
                     {children}
                   </ol>
                 ),
@@ -75,12 +75,12 @@ export default function RichBody({ body, bodyMedia }: RichBodyProps) {
                   <li className="text-neutral-600">{children}</li>
                 ),
                 blockquote: ({ children }) => (
-                  <blockquote className="border-l-3 border-neutral-300 pl-8 py-3 text-neutral-500 italic text-lg md:text-xl leading-[1.8]">
+                  <blockquote className="border-l-3 border-neutral-300 pl-8 py-3 text-neutral-500 italic text-lg md:text-xl leading-[1.5]">
                     {children}
                   </blockquote>
                 ),
                 hr: () => (
-                  <hr className="border-t border-black/10 my-14" />
+                  <hr className="border-t border-black/10 my-10" />
                 ),
                 table: ({ children }) => (
                   <div className="overflow-x-auto mb-6">
