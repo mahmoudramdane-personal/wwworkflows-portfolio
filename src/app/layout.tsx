@@ -12,9 +12,18 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "WWWorkflows - Studio de Design Computationnel",
+  metadataBase: new URL("https://wwworkflows.com"),
+  title: {
+    default: "WWWorkflows — Studio de Design Computationnel",
+    template: "%s — WWWorkflows",
+  },
   description:
     "Computational Design as a Service. Systèmes algorithmiques de façade, planification paramétrique de fabrication et automatisation digitale pour l'architecture.",
+  openGraph: {
+    siteName: "WWWorkflows",
+    locale: "fr_FR",
+    type: "website",
+  },
 };
 
 export default function RootLayout({

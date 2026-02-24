@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import RichBody from "@/components/RichBody";
+import type { Metadata } from "next";
 
 export const revalidate = 60;
 export const dynamicParams = true;
@@ -14,6 +15,31 @@ interface ArticlePageProps {
 export async function generateStaticParams() {
   const articles = await getArticles();
   return articles.map((a) => ({ slug: a.slug }));
+}
+
+export async function generateMetadata({ params }: ArticlePageProps): Promise<Metadata> {
+  const { slug } = await params;
+  const article = await getArticleBySlug(slug);
+
+  if (!article) return {};
+
+  return {
+    title: article.title,
+    description: article.excerpt,
+    openGraph: {
+      title: article.title,
+      description: article.excerpt,
+      url: `/article/${article.slug}`,
+      type: "article",
+      publishedTime: article.date,
+      images: article.thumbnail
+        ? [{ url: article.thumbnail, width: 1200, height: 630, alt: article.title }]
+        : [],
+    },
+    twitter: {
+      card: "summary_large_image",
+    },
+  };
 }
 
 export default async function ArticlePage({ params }: ArticlePageProps) {

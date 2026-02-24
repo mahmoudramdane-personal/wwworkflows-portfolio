@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { CATEGORY_LABELS, Category } from "@/lib/types";
 import RichBody from "@/components/RichBody";
+import type { Metadata } from "next";
 
 export const revalidate = 60;
 export const dynamicParams = true;
@@ -15,6 +16,30 @@ interface ProjectPageProps {
 export async function generateStaticParams() {
   const projects = await getProjects();
   return projects.map((p) => ({ slug: p.slug }));
+}
+
+export async function generateMetadata({ params }: ProjectPageProps): Promise<Metadata> {
+  const { slug } = await params;
+  const project = await getProjectBySlug(slug);
+
+  if (!project) return {};
+
+  return {
+    title: project.title,
+    description: project.subtitle,
+    openGraph: {
+      title: project.title,
+      description: project.subtitle,
+      url: `/project/${project.slug}`,
+      type: "article",
+      images: project.heroImage
+        ? [{ url: project.heroImage, width: 1200, height: 630, alt: project.title }]
+        : [],
+    },
+    twitter: {
+      card: "summary_large_image",
+    },
+  };
 }
 
 export default async function ProjectPage({ params }: ProjectPageProps) {
