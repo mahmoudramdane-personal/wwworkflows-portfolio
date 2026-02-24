@@ -30,19 +30,27 @@ export default function Header() {
 
         {/* Navigation */}
         <nav className="flex items-center gap-8">
-          {navLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className={`text-xs tracking-[0.12em] uppercase transition-colors duration-300 ${
-                pathname === link.href
-                  ? "text-neutral-900"
-                  : "text-neutral-400 hover:text-neutral-900"
-              }`}
-            >
-              {link.label}
-            </Link>
-          ))}
+          {navLinks.map((link) => {
+            const isActive = pathname === link.href;
+            return (
+              <Link
+                key={link.href}
+                href={link.href}
+                className={`relative text-xs tracking-[0.12em] uppercase transition-all duration-300 group ${
+                  isActive
+                    ? "text-neutral-900 font-semibold"
+                    : "text-neutral-400 hover:text-neutral-900 hover:font-semibold"
+                }`}
+              >
+                {link.label}
+                <span
+                  className={`absolute -bottom-1 left-0 h-[1.5px] bg-neutral-900 transition-all duration-300 ease-out ${
+                    isActive ? "w-full" : "w-0 group-hover:w-full"
+                  }`}
+                />
+              </Link>
+            );
+          })}
         </nav>
       </div>
     </header>
