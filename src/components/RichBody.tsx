@@ -112,6 +112,20 @@ export default function RichBody({ body, bodyMedia }: RichBodyProps) {
                     {children}
                   </a>
                 ),
+                // eslint-disable-next-line @next/next/no-img-element
+                img: ({ src, alt }) => (
+                  <figure className="my-4">
+                    <div className="relative overflow-hidden bg-neutral-100">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={src}
+                        alt={alt || ""}
+                        className="w-full h-auto"
+                        loading="lazy"
+                      />
+                    </div>
+                  </figure>
+                ),
               }}
             >
               {segment.value}

@@ -112,12 +112,20 @@ File not found: ${absPath}
 
     console.log(`  → Uploading to Contentful...`);
     const asset = await uploadAsset(env, optimizedPath, ref.filename, mimeType);
-    uploadedAssets[ref.filename] = { id: asset.sys.id };
+    const rawUrl = asset.fields?.file?.[LOCALE]?.url;
+    uploadedAssets[ref.filename] = {
+      id: asset.sys.id,
+      url: rawUrl ? `https:${rawUrl}` : null,
+    };
     console.log(`  ✓  Uploaded: ${ref.filename} (id: ${asset.sys.id})`);
   }
 
-  // 5. Transform body (Obsidian syntax → {{media:}} / {{youtube:}} / {{video:}})
-  const transformedBody = transformBody(rawBody);
+  // 5. Transform body (Obsidian syntax → site syntax)
+  // Articles: images become inline markdown URLs (no bodyMedia field needed)
+  // Projects: images become {{media:}} syntax backed by bodyMedia assets
+  const transformedBody = fm.type === "article"
+    ? transformBodyArticle(rawBody, uploadedAssets)
+    : transformBody(rawBody);
 
   // 6. Upsert Contentful entry
   console.log(`
@@ -342,6 +350,21 @@ function transformBody(body) {
   return result.trim();
 }
 
+// Article variant: replaces {{media:filename}} with inline markdown image URLs
+// (articles don't have a bodyMedia field in Contentful)
+function transformBodyArticle(body, assets) {
+  let result = transformBody(body);
+
+  // Replace {{media:filename}} → ![filename](https://cdn-url)
+  result = result.replace(/\{\{media:([^}]+)\}\}/g, (match, filename) => {
+    const asset = assets[filename];
+    if (asset?.url) return `![${filename}](${asset.url})`;
+    return match;
+  });
+
+  return result;
+}
+
 // ─── Contentful entry upsert ──────────────────────────────────────────────────────────
 
 async function upsertArticle(env, fm, body, assets) {
@@ -351,7 +374,7 @@ async function upsertArticle(env, fm, body, assets) {
     excerpt:  { [LOCALE]: fm.excerpt || "" },
     body:     { [LOCALE]: body },
     category: { [LOCALE]: fm.category || "" },
-    date:     { [LOCALE]: fm.date ? String(fm.date) : new Date().toISOString().split("T")[0] },
+    date:     { [LOCALE]: fm.date instanceof Date ? fm.date.toISOString().split("T")[0] : String(fm.date) },
     order:    { [LOCALE]: Number(fm.order) || 0 },
   };
 
@@ -363,11 +386,8 @@ async function upsertArticle(env, fm, body, assets) {
     };
   }
 
-  // bodyMedia: all assets referenced in the transformed body
-  const bodyMediaLinks = getBodyMediaLinks(body, assets);
-  if (bodyMediaLinks.length) {
-    fields.bodyMedia = { [LOCALE]: bodyMediaLinks };
-  }
+  // Note: articles use inline markdown image URLs instead of bodyMedia
+  // (the article content type does not have a bodyMedia field)
 
   await upsertEntry(env, "article", fm.slug, fields);
 }
@@ -422,20 +442,23 @@ function getBodyMediaLinks(body, assets) {
 }
 
 async function upsertEntry(env, contentType, id, fields) {
+  // Try to fetch the existing entry first; any error means it doesn't exist yet
+  let existing = null;
   try {
-    const existing = await env.getEntry(id);
+    existing = await env.getEntry(id);
+  } catch (_) {
+    // Entry not found — will create below
+  }
+
+  if (existing) {
     existing.fields = { ...existing.fields, ...fields };
     const updated = await existing.update();
     await updated.publish();
     console.log(`  ✓  Updated existing entry: ${id}`);
-  } catch (e) {
-    if (e.status === 404) {
-      const entry = await env.createEntryWithId(contentType, id, { fields });
-      await entry.publish();
-      console.log(`  ✓  Created new entry: ${id}`);
-    } else {
-      throw e;
-    }
+  } else {
+    const entry = await env.createEntryWithId(contentType, id, { fields });
+    await entry.publish();
+    console.log(`  ✓  Created new entry: ${id}`);
   }
 }
 
