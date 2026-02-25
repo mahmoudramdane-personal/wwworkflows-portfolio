@@ -87,24 +87,31 @@ EN/FR toggle was dropped in favour of French-only. All static copy and CMS conte
 | `5606cb6` | chore: add publish-note script to package.json |
 | `6ae5bb0` | docs: add Obsidian writing guide for articles and projects |
 
-### One-time setup still needed
-- [ ] Add `CONTENTFUL_MANAGEMENT_TOKEN` to `.env.local` (get from Contentful → Settings → API Keys → Personal Access Tokens) — required to use the publish script
+### Bugs found and fixed during testing
+- `contentful-management` named ESM import fails on Node 24 → switched to default import + destructure
+- 404 status check didn't match SDK v11 error shape → restructured `upsertEntry` to try/catch without status code
+- `article` content type has no `bodyMedia` field → articles now use inline markdown URLs `![](cdn-url)` instead
+- `gray-matter` parses `date: YYYY-MM-DD` as a JS Date object → fixed with `.toISOString().split("T")[0]`
+- Inline article images had no styling → added `img` renderer to `RichBody.tsx`
+- Stray `nul` Windows device file in repo root → added to `.gitignore`
+
+### Pipeline status: ✅ Fully working
+End-to-end test passed: image optimized (25KB → 8KB, -67%), uploaded to Contentful, article created and live.
 
 ---
 
-## Next Steps
+## Session 5 — Pending (later)
 
 ### Priority
+- [ ] **Delete test article** from Contentful ("Test Pipeline — À Supprimer")
 - [ ] **Sitemap** — add `src/app/sitemap.ts` so Google discovers all pages automatically
-- [ ] **Test the publish pipeline** — write a real article in Obsidian, run `npm run publish-note`, verify it goes live
-- [ ] **Upload remaining case studies** to Contentful using the publish script
+- [ ] **Verify OG previews** on LinkedIn (use https://www.linkedin.com/post-inspector/)
 
 ### Content
 - [ ] Write + publish first real article via Obsidian pipeline
-- [ ] Add real thumbnail/hero images (replace placeholder SVGs)
-- [ ] Add more case studies
+- [ ] Add more case studies via publish pipeline
+- [ ] Replace placeholder images with real ones
 
 ### Polish
 - [ ] Custom 404 page
 - [ ] `loading.tsx` skeleton for project/article pages
-- [ ] Verify OG previews on LinkedIn (use https://www.linkedin.com/post-inspector/)

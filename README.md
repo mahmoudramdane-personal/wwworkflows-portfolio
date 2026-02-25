@@ -158,10 +158,12 @@ npm run publish-note "C:/path/to/Obsidian/Articles/My Article/note.md"
 The script automatically:
 - Converts JPG/PNG → WebP (resized for web)
 - Converts GIFs → animated WebP (−40 to −70% file size)
-- Uploads all assets to Contentful
+- Uploads all assets to Contentful (skips if already uploaded)
 - Transforms Obsidian embed syntax to the site's format
-- Creates or updates the Contentful entry
+- Creates or updates the Contentful entry and publishes it
 - Content goes live in ~60 seconds via ISR
+
+> **Note:** Articles use inline CDN image URLs in the body (no `bodyMedia` field required). Case studies use `bodyMedia` asset links.
 
 ## Rich Media in Body Content
 
