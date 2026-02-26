@@ -14,7 +14,7 @@ Visual direction inspired by [vorhammer.net](https://vorhammer.net/).
 | CMS         | Contentful (Headless) |
 | Language    | TypeScript           |
 | Hosting     | Vercel               |
-| Analytics   | Vercel Analytics     |
+| Analytics   | Vercel Analytics + Speed Insights |
 | Font        | Inter (Google Fonts)  |
 
 ## Project Structure
@@ -204,7 +204,7 @@ Every project and article page has:
 
 ## Deployment
 
-Deployed on Vercel. Set `CONTENTFUL_SPACE_ID` and `CONTENTFUL_ACCESS_TOKEN` in Vercel environment variables. The `CONTENTFUL_MANAGEMENT_TOKEN` is only needed locally (for the publish script).
+Deployed on Vercel at **wwworkflows.com** (and www.wwworkflows.com → redirects to apex). Set `CONTENTFUL_SPACE_ID` and `CONTENTFUL_ACCESS_TOKEN` in Vercel environment variables. The `CONTENTFUL_MANAGEMENT_TOKEN` is only needed locally (for the publish script).
 
 ISR revalidation is **60 seconds** on all pages — content updates in Contentful appear within 1 minute without a redeploy.
 

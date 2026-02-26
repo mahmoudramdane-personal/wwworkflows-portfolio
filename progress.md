@@ -100,11 +100,26 @@ End-to-end test passed: image optimized (25KB → 8KB, -67%), uploaded to Conten
 
 ---
 
-## Session 5 — Pending (later)
+---
+
+## Session 5 (2026-02-26)
+
+### Completed
+- [x] **Vercel Speed Insights** added (`@vercel/speed-insights/next`) — tracks real-user Core Web Vitals (LCP, INP, CLS, TTFB) visible in Vercel dashboard
+- [x] **Custom domain configured** — `wwworkflows.com` and `www.wwworkflows.com` DNS records added at registrar, both pointing to Vercel
+- [x] SSL certificate auto-provisioned by Vercel
+- [x] Test article deleted from Contentful ("Test Pipeline — À Supprimer")
+
+### Pending (DNS propagation)
+- [ ] Confirm `www.wwworkflows.com` resolves (can take up to a few hours after DNS change)
+
+---
+
+## Next Steps
 
 ### Priority
-- [ ] **Delete test article** from Contentful ("Test Pipeline — À Supprimer")
 - [ ] **Sitemap** — add `src/app/sitemap.ts` so Google discovers all pages automatically
+- [ ] **Submit to Google Search Console** — verify domain and submit sitemap
 - [ ] **Verify OG previews** on LinkedIn (use https://www.linkedin.com/post-inspector/)
 
 ### Content
