@@ -211,17 +211,17 @@ function renderMedia(filename: string, bodyMedia: MediaAsset[], key: number) {
           <img
             src={asset.url}
             alt={filename}
-            className="w-full h-auto"
+            className="max-w-full max-h-[85vh] w-auto h-auto mx-auto block"
             loading="lazy"
           />
         ) : (
           <Image
             src={asset.url}
             alt={filename}
-            width={asset.width || 1200}
-            height={asset.height || 675}
+            width={asset.width || 1600}
+            height={asset.height || 900}
             className="w-full h-auto"
-            sizes="(max-width: 768px) 100vw, 768px"
+            sizes="(max-width: 768px) calc(100vw - 48px), (max-width: 1400px) calc(100vw - 96px), 1304px"
           />
         )}
       </div>

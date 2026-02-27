@@ -34,7 +34,7 @@ const MANAGEMENT_TOKEN = process.env.CONTENTFUL_MANAGEMENT_TOKEN;
 const LOCALE = "en-US"; // Change if your Contentful space uses a different locale
 const ENV_ID = "master";
 
-const MAX_BODY_PX = 1200;  // max width for in-body images
+const MAX_BODY_PX = 1600;  // max width for in-body images (display up to ~1304px)
 const MAX_HERO_PX = 2400;  // max width for hero / thumbnail images
 
 // ─── Main ──────────────────────────────────────────────────────────────────────────
