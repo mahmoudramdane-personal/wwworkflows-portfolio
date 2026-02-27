@@ -116,7 +116,7 @@ Get the Management Token from: Contentful → click your avatar → Account Sett
 | Collaborators   | `collaborators` | Short text      | No       |
 | Order           | `order`         | Integer         | No       |
 | Thumbnail       | `thumbnail`     | Media (image)   | Yes      |
-| Hero Image      | `heroImage`     | Media (image)   | Yes      |
+| Hero Image      | `heroImage`     | Media (image)   | No — if empty, the hero section is hidden on the page (still used for OG/social preview) |
 | Body            | `body`          | Long text       | Yes      |
 | Project Images  | `projectImages` | Media (many)    | No       |
 | Body Media      | `bodyMedia`     | Media (many)    | No       |
@@ -157,7 +157,7 @@ npm run publish-note "C:/path/to/Obsidian/Articles/My Article/note.md"
 
 The script automatically:
 - Converts JPG/PNG → WebP (resized for web)
-- Converts GIFs → animated WebP (−40 to −70% file size)
+- Converts GIFs → animated WebP (resized + −70 to −90% file size; handles large GIFs via `limitInputPixels: false`)
 - Uploads all assets to Contentful (skips if already uploaded)
 - Transforms Obsidian embed syntax to the site's format
 - Creates or updates the Contentful entry and publishes it
