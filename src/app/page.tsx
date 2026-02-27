@@ -11,13 +11,13 @@ export default async function Home() {
       {/* Hero */}
       <section className="pt-24 pb-16 md:pt-32 md:pb-20">
         <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold tracking-tight leading-tight max-w-4xl text-neutral-900">
-          Computational Design
-          <br />
-          <span className="text-neutral-400">as a Service</span>
+          Workflows
         </h1>
+        <p className="mt-3 text-lg md:text-xl text-neutral-400 font-normal tracking-tight">
+          Design Paramétrique et Computationnel
+        </p>
         <p className="mt-6 text-neutral-500 text-base md:text-lg max-w-2xl leading-relaxed">
-          Systèmes algorithmiques, façades paramétriques et planification de
-          fabrication digitale — du concept à la construction.
+          Un partenaire créatif pour les architectes et designers. Nous développons des workflows algorithmiques qui aident à imaginer, modéliser et produire.
         </p>
       </section>
 

@@ -40,11 +40,15 @@ const MAX_HERO_PX = 2400;  // max width for hero / thumbnail images
 // ─── Main ──────────────────────────────────────────────────────────────────────────
 
 async function main() {
-  const notePath = process.argv[2];
+  const args = process.argv.slice(2);
+  const notePath = args.find((a) => !a.startsWith("--"));
+  const fullOverwrite = args.includes("--full");
 
   if (!notePath) {
     console.error(
-      "\nUsage: node --env-file=.env.local scripts/publish.mjs \"path/to/note.md\"\n"
+      "\nUsage: node --env-file=.env.local scripts/publish.mjs \"path/to/note.md\" [--full]\n" +
+      "\n  Default: only updates body + bodyMedia (safe — preserves Contentful edits)" +
+      "\n  --full:  overwrites all fields from Obsidian frontmatter\n"
     );
     process.exit(1);
   }
@@ -131,9 +135,9 @@ File not found: ${absPath}
   console.log(`
 📝 Publishing ${fm.type}: "${fm.title}"`);
   if (fm.type === "article") {
-    await upsertArticle(env, fm, transformedBody, uploadedAssets);
+    await upsertArticle(env, fm, transformedBody, uploadedAssets, fullOverwrite);
   } else {
-    await upsertProject(env, fm, transformedBody, uploadedAssets);
+    await upsertProject(env, fm, transformedBody, uploadedAssets, fullOverwrite);
   }
 
   // 7. Cleanup temp files
@@ -220,7 +224,8 @@ async function optimizeAsset(inputPath, filename, maxWidth) {
   // GIF → animated WebP (better compression, same animation)
   if (ext === ".gif") {
     const outPath = inputPath.replace(/\.gif$/i, "-optimized.webp");
-    await sharp(inputPath, { animated: true })
+    await sharp(inputPath, { animated: true, limitInputPixels: false })
+      .resize({ width: maxWidth, withoutEnlargement: true })
       .webp({ quality: 75, effort: 4 })
       .toFile(outPath);
     logSizeReduction(inputPath, outPath, "GIF→WebP");
@@ -367,7 +372,7 @@ function transformBodyArticle(body, assets) {
 
 // ─── Contentful entry upsert ──────────────────────────────────────────────────────────
 
-async function upsertArticle(env, fm, body, assets) {
+async function upsertArticle(env, fm, body, assets, fullOverwrite = false) {
   const fields = {
     title:    { [LOCALE]: fm.title },
     slug:     { [LOCALE]: fm.slug },
@@ -389,10 +394,15 @@ async function upsertArticle(env, fm, body, assets) {
   // Note: articles use inline markdown image URLs instead of bodyMedia
   // (the article content type does not have a bodyMedia field)
 
-  await upsertEntry(env, "article", fm.slug, fields);
+  // On safe update: only body is synced from Obsidian; everything else preserves Contentful edits.
+  // On --full: overwrite all fields.
+  const preserve = fullOverwrite
+    ? new Set()
+    : new Set(["title", "slug", "excerpt", "category", "date", "order", "thumbnail"]);
+  await upsertEntry(env, "article", fm.slug, fields, preserve);
 }
 
-async function upsertProject(env, fm, body, assets) {
+async function upsertProject(env, fm, body, assets, fullOverwrite = false) {
   const fields = {
     title:         { [LOCALE]: fm.title },
     slug:          { [LOCALE]: fm.slug },
@@ -429,7 +439,12 @@ async function upsertProject(env, fm, body, assets) {
     fields.bodyMedia = { [LOCALE]: bodyMediaLinks };
   }
 
-  await upsertEntry(env, "caseStudy", fm.slug, fields);
+  // On safe update: only body + bodyMedia are synced from Obsidian; everything else preserves Contentful edits.
+  // On --full: overwrite all fields.
+  const preserve = fullOverwrite
+    ? new Set()
+    : new Set(["title", "slug", "subtitle", "client", "year", "location", "category", "status", "collaborators", "order", "heroImage", "thumbnail", "projectImages"]);
+  await upsertEntry(env, "caseStudy", fm.slug, fields, preserve);
 }
 
 function getBodyMediaLinks(body, assets) {
@@ -441,7 +456,7 @@ function getBodyMediaLinks(body, assets) {
   return [...ids].map((id) => ({ sys: { type: "Link", linkType: "Asset", id } }));
 }
 
-async function upsertEntry(env, contentType, id, fields) {
+async function upsertEntry(env, contentType, id, fields, preserveOnUpdate = new Set()) {
   // Try to fetch the existing entry first; any error means it doesn't exist yet
   let existing = null;
   try {
@@ -451,7 +466,18 @@ async function upsertEntry(env, contentType, id, fields) {
   }
 
   if (existing) {
-    existing.fields = { ...existing.fields, ...fields };
+    const mode = preserveOnUpdate.size === 0 ? "full overwrite" : "body-only update";
+    console.log(`  ℹ  Mode: ${mode}`);
+    // On safe update: skip any field in preserveOnUpdate that already has a value
+    // in Contentful — protects manual edits to text, images, etc.
+    const mergedFields = { ...existing.fields };
+    for (const [key, value] of Object.entries(fields)) {
+      if (preserveOnUpdate.has(key) && existing.fields[key]) {
+        continue;
+      }
+      mergedFields[key] = value;
+    }
+    existing.fields = mergedFields;
     const updated = await existing.update();
     await updated.publish();
     console.log(`  ✓  Updated existing entry: ${id}`);

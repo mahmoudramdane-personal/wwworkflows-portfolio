@@ -23,11 +23,12 @@ export default function RichBody({ body, bodyMedia }: RichBodyProps) {
   const segments = splitMediaSegments(body);
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       {segments.map((segment, i) => {
         if (segment.type === "media") return renderMedia(segment.value, bodyMedia, i);
         if (segment.type === "youtube") return renderYouTube(segment.value, i);
         if (segment.type === "video") return renderVideo(segment.value, bodyMedia, i);
+        if (segment.type === "miro") return renderMiro(segment.value, i);
 
         // Markdown content
         return (
@@ -36,38 +37,38 @@ export default function RichBody({ body, bodyMedia }: RichBodyProps) {
               remarkPlugins={[remarkGfm]}
               components={{
                 h1: ({ children }) => (
-                  <h1 className="text-4xl md:text-5xl font-bold text-neutral-900 mt-12 mb-4">
+                  <h1 className="text-2xl md:text-3xl font-semibold text-neutral-900 mt-12 mb-4">
                     {children}
                   </h1>
                 ),
                 h2: ({ children }) => (
-                  <h2 className="text-3xl md:text-4xl font-bold text-neutral-900 mt-10 mb-4">
+                  <h2 className="text-lg font-semibold text-neutral-900 mt-10 mb-3">
                     {children}
                   </h2>
                 ),
                 h3: ({ children }) => (
-                  <h3 className="text-2xl md:text-3xl font-bold text-neutral-900 mt-8 mb-3">
+                  <h3 className="text-[15px] font-semibold text-neutral-900 mt-6 mb-2">
                     {children}
                   </h3>
                 ),
                 p: ({ children }) => (
-                  <p className="text-neutral-600 text-lg md:text-xl leading-[1.5] tracking-wide mb-5">
+                  <p className="text-neutral-600 text-[15px] leading-[1.75] mb-4">
                     {children}
                   </p>
                 ),
                 strong: ({ children }) => (
-                  <strong className="font-bold text-neutral-900">{children}</strong>
+                  <strong className="font-semibold text-neutral-900">{children}</strong>
                 ),
                 em: ({ children }) => (
                   <em className="italic text-neutral-700">{children}</em>
                 ),
                 ul: ({ children }) => (
-                  <ul className="list-disc pl-8 space-y-3 text-neutral-600 text-lg md:text-xl leading-[1.5] tracking-wide mb-5">
+                  <ul className="list-disc pl-6 space-y-1.5 text-neutral-600 text-[15px] leading-[1.75] mb-4">
                     {children}
                   </ul>
                 ),
                 ol: ({ children }) => (
-                  <ol className="list-decimal pl-8 space-y-3 text-neutral-600 text-lg md:text-xl leading-[1.5] tracking-wide mb-5">
+                  <ol className="list-decimal pl-6 space-y-1.5 text-neutral-600 text-[15px] leading-[1.75] mb-4">
                     {children}
                   </ol>
                 ),
@@ -75,32 +76,32 @@ export default function RichBody({ body, bodyMedia }: RichBodyProps) {
                   <li className="text-neutral-600">{children}</li>
                 ),
                 blockquote: ({ children }) => (
-                  <blockquote className="border-l-3 border-neutral-300 pl-8 py-3 text-neutral-500 italic text-lg md:text-xl leading-[1.5]">
+                  <blockquote className="border-l-2 border-neutral-300 pl-6 py-1 text-neutral-500 italic text-[15px] leading-[1.75]">
                     {children}
                   </blockquote>
                 ),
                 hr: () => (
-                  <hr className="border-t border-black/10 my-10" />
+                  <hr className="border-t border-black/10 my-8" />
                 ),
                 table: ({ children }) => (
-                  <div className="overflow-x-auto mb-6">
-                    <table className="w-full text-lg text-left border-collapse">
+                  <div className="overflow-x-auto mb-5">
+                    <table className="w-full text-[15px] text-left border-collapse">
                       {children}
                     </table>
                   </div>
                 ),
                 thead: ({ children }) => (
-                  <thead className="border-b border-black/10 text-neutral-900 font-bold">
+                  <thead className="border-b border-black/10 text-neutral-900">
                     {children}
                   </thead>
                 ),
                 th: ({ children }) => (
-                  <th className="py-3 pr-6 text-base tracking-[0.06em] uppercase text-neutral-400">
+                  <th className="py-2.5 pr-6 text-xs tracking-[0.1em] uppercase text-neutral-400 font-medium">
                     {children}
                   </th>
                 ),
                 td: ({ children }) => (
-                  <td className="py-3 pr-6 text-neutral-600 text-lg">{children}</td>
+                  <td className="py-2.5 pr-6 text-neutral-600 text-[15px]">{children}</td>
                 ),
                 a: ({ href, children }) => (
                   <a
@@ -140,7 +141,7 @@ export default function RichBody({ body, bodyMedia }: RichBodyProps) {
 // --- Helpers ---
 
 interface Segment {
-  type: "markdown" | "media" | "youtube" | "video";
+  type: "markdown" | "media" | "youtube" | "video" | "miro";
   value: string;
 }
 
@@ -176,6 +177,13 @@ function splitMediaSegments(body: string): Segment[] {
     if (videoMatch) {
       flushMd();
       segments.push({ type: "video", value: videoMatch[1] });
+      continue;
+    }
+
+    const miroMatch = trimmed.match(/^\{\{miro:(.+?)\}\}$/);
+    if (miroMatch) {
+      flushMd();
+      segments.push({ type: "miro", value: miroMatch[1] });
       continue;
     }
 
@@ -229,6 +237,28 @@ function renderYouTube(videoId: string, key: number) {
           src={`https://www.youtube-nocookie.com/embed/${videoId}`}
           title="YouTube video"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowFullScreen
+          className="absolute inset-0 w-full h-full"
+        />
+      </div>
+    </figure>
+  );
+}
+
+function renderMiro(value: string, key: number) {
+  // value is like "BOARD_ID?moveToViewport=...&embedId=..."
+  const [boardId, params] = value.split("?");
+  const src = `https://miro.com/app/live-embed/${boardId}/?embedMode=view_only_without_ui${params ? `&${params}` : ""}`;
+
+  return (
+    <figure key={key} className="my-4">
+      <div className="relative aspect-video overflow-hidden bg-neutral-100">
+        <iframe
+          src={src}
+          title="Miro board"
+          frameBorder="0"
+          scrolling="no"
+          allow="fullscreen; clipboard-read; clipboard-write"
           allowFullScreen
           className="absolute inset-0 w-full h-full"
         />

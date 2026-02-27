@@ -115,6 +115,33 @@ End-to-end test passed: image optimized (25KB → 8KB, -67%), uploaded to Conten
 
 ---
 
+## Session 6 (2026-02-26)
+
+### Completed
+- [x] **First real case study published** — WWWorkflows × YDA — Tours Casablanca
+  - Slug: `wwworkflows-yda-tours-casablanca`
+  - 23 assets uploaded (5 GIFs + 18 PNGs), all optimized to WebP
+  - Compression: up to −98% on PNGs, −90% on hero GIF (49MB → 5MB)
+  - Live at `https://wwworkflows.com/project/wwworkflows-yda-tours-casablanca`
+- [x] **GIF pixel limit bug fixed** — added `limitInputPixels: false` + resize to GIF→WebP conversion in `scripts/publish.mjs`
+- [x] **Obsidian vault organized** — `TEST VAULT/Projects/wwworkflows-yda-tours-casablanca/` with `note.md` + `attachments/` (23 files, no spaces)
+- [x] **Case study body rewritten** — narrative structure (Étape 1→7) with closing "Ce que cette mission démontre"
+- [x] **Typography overhaul** (`RichBody.tsx`) — body 15px / leading-[1.75], H2 text-lg semibold, H3 text-[15px] semibold, removed tracking-wide on prose, tightened all spacing
+- [x] **Hero image made optional** — page hides the section if `heroImage` is empty in Contentful; `heroImage` field set to non-required in Contentful content model
+- [x] **Homepage hero text updated** — "Computational Design" → "Workflows", "as a Service" → "Design Paramétrique et Computationnel"
+
+### Folder structure created in Obsidian
+```
+TEST VAULT/Projects/wwworkflows-yda-tours-casablanca/
+  note.md              ← frontmatter + body, all refs updated
+  attachments/         ← 23 files, all renamed (no spaces)
+```
+
+### Bugs fixed
+- `scripts/publish.mjs`: large GIFs crash sharp with "pixel limit exceeded" → fixed with `limitInputPixels: false` + resize on GIF branch
+
+---
+
 ## Next Steps
 
 ### Priority

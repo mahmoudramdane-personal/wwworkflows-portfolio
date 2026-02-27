@@ -87,10 +87,10 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
           </div>
         </section>
 
-        {/* Hero image */}
-        <section className="mb-12">
-          <div className="relative aspect-[16/9] overflow-hidden bg-neutral-100">
-            {project.heroImage ? (
+        {/* Hero image — remove from Contentful entry to hide */}
+        {project.heroImage && (
+          <section className="mb-12">
+            <div className="relative aspect-[16/9] overflow-hidden bg-neutral-100">
               <Image
                 src={project.heroImage}
                 alt={project.title}
@@ -99,15 +99,9 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
                 priority
                 sizes="(max-width: 1400px) 100vw, 1400px"
               />
-            ) : (
-              <div className="absolute inset-0 flex items-center justify-center">
-                <span className="text-neutral-400 text-xs tracking-[0.12em] uppercase">
-                  Image à venir
-                </span>
-              </div>
-            )}
-          </div>
-        </section>
+            </div>
+          </section>
+        )}
 
         {/* Body content — full width */}
         <section className="mb-16">
