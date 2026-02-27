@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "publish-note": "node --env-file=.env.local scripts/publish.mjs"
+    "publish-note": "node --env-file=.env.local scripts/publish.mjs --"
   },
   "dependencies": {
     "@vercel/analytics": "^1.6.1",
