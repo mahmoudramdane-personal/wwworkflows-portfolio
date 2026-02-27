@@ -2,15 +2,20 @@
 
 ## UI / Interactions
 
-- [ ] **GIF hover-to-play** — GIFs in case study bodies should be paused (show first frame) by default and only play when the cursor is over them. Currently all animated WebPs autoplay. Likely needs a client component wrapper in `RichBody.tsx` that swaps `src` or uses CSS `animation-play-state` on hover.
+- [x] **GIF hover-to-play** — done via `AnimatedMedia.tsx` client component
+- [x] **Project card hover image cycling** — bodyMedia images cycle randomly at 0.6s on hover
 
 ---
 
 ## SEO
 
-- [ ] **Sitemap** — add `src/app/sitemap.ts` so Google discovers all pages automatically
-- [ ] **Google Search Console** — verify domain and submit sitemap
+- [x] **Sitemap** — `src/app/sitemap.ts` live at wwworkflows.com/sitemap.xml
+- [x] **robots.txt** — live at wwworkflows.com/robots.txt
+- [x] **Google Search Console** — domain verified, sitemap submitted
 - [ ] **Verify OG previews** on LinkedIn (use https://www.linkedin.com/post-inspector/)
+- [ ] **Articles SEO** — write articles targeting keywords: "computational design maroc/france/belgique", "façade paramétrique architecte", "grasshopper architecte service"
+- [ ] **Metadata descriptions** — enrich subtitle/excerpt fields in Contentful with more keywords naturally
+- [ ] **Google My Business** — create listing for local search visibility
 
 ---
 
@@ -24,5 +29,5 @@
 
 ## Polish
 
-- [ ] Custom 404 page
-- [ ] `loading.tsx` skeleton for project/article pages
+- [x] Custom 404 page — `src/app/not-found.tsx`
+- [x] `loading.tsx` skeletons — project and article pages
