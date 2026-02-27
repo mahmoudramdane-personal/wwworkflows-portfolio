@@ -43,12 +43,14 @@ async function main() {
   const args = process.argv.slice(2);
   const notePath = args.find((a) => !a.startsWith("--"));
   const fullOverwrite = args.includes("--full");
+  const forceAssets = args.includes("--force-assets");
 
   if (!notePath) {
     console.error(
-      "\nUsage: node --env-file=.env.local scripts/publish.mjs \"path/to/note.md\" [--full]\n" +
-      "\n  Default: only updates body + bodyMedia (safe — preserves Contentful edits)" +
-      "\n  --full:  overwrites all fields from Obsidian frontmatter\n"
+      "\nUsage: node --env-file=.env.local scripts/publish.mjs \"path/to/note.md\" [--full] [--force-assets]\n" +
+      "\n  Default:        only updates body + bodyMedia (safe — preserves Contentful edits)" +
+      "\n  --full:         overwrites all fields from Obsidian frontmatter" +
+      "\n  --force-assets: re-uploads all assets even if they already exist in Contentful\n"
     );
     process.exit(1);
   }
@@ -115,7 +117,7 @@ File not found: ${absPath}
     if (optimizedPath !== localPath) tmpFiles.push(optimizedPath);
 
     console.log(`  → Uploading to Contentful...`);
-    const asset = await uploadAsset(env, optimizedPath, ref.filename, mimeType);
+    const asset = await uploadAsset(env, optimizedPath, ref.filename, mimeType, forceAssets);
     const rawUrl = asset.fields?.file?.[LOCALE]?.url;
     uploadedAssets[ref.filename] = {
       id: asset.sys.id,
@@ -262,17 +264,19 @@ function kb(bytes) {
 
 // ─── Contentful asset upload ─────────────────────────────────────────────────────────
 
-async function uploadAsset(env, filePath, originalFilename, mimeType) {
-  // Check if asset with this filename already exists → reuse it
-  const existing = await env.getAssets({ limit: 100 });
-  const found = existing.items.find((a) => {
-    const file = a.fields?.file?.[LOCALE];
-    return file && file.fileName === originalFilename;
-  });
+async function uploadAsset(env, filePath, originalFilename, mimeType, forceAssets = false) {
+  // Check if asset with this filename already exists → reuse it (unless --force-assets)
+  if (!forceAssets) {
+    const existing = await env.getAssets({ limit: 100 });
+    const found = existing.items.find((a) => {
+      const file = a.fields?.file?.[LOCALE];
+      return file && file.fileName === originalFilename;
+    });
 
-  if (found) {
-    console.log(`     Already exists in Contentful — reusing`);
-    return found;
+    if (found) {
+      console.log(`     Already exists in Contentful — reusing`);
+      return found;
+    }
   }
 
   // Upload binary
