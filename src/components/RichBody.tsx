@@ -2,6 +2,7 @@ import Image from "next/image";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { MediaAsset } from "@/lib/types";
+import AnimatedMedia from "./AnimatedMedia";
 
 interface RichBodyProps {
   body: string;
@@ -207,13 +208,7 @@ function renderMedia(filename: string, bodyMedia: MediaAsset[], key: number) {
     <figure key={key} className="my-4">
       <div className="relative overflow-hidden bg-neutral-100">
         {isGif ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={asset.url}
-            alt={filename}
-            className="max-w-full max-h-[85vh] w-auto h-auto mx-auto block"
-            loading="lazy"
-          />
+          <AnimatedMedia src={asset.url} alt={filename} />
         ) : (
           <Image
             src={asset.url}
