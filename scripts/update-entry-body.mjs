@@ -1,7 +1,7 @@
 import contentful from "contentful-management";
 import { readFileSync } from "fs";
 
-const CMA_TOKEN = process.env.CONTENTFUL_CMA_TOKEN;
+const CMA_TOKEN = process.env.CONTENTFUL_MANAGEMENT_TOKEN;
 const SPACE_ID = process.env.CONTENTFUL_SPACE_ID || "dn6s7kpaqpjg";
 const ENTRY_ID = "2GHolc9hziVM9kuugYHkxT";
 
