@@ -28,7 +28,7 @@ Le site — Lot 7.1 — est un pignon stratégique à l'intersection de quatre a
 | **Tour S** | La plus petite |
 | **Socle** | Élément de jonction des trois masses — à traiter avec attention particulière |
 
-Sur notre Miro Board partagé avec l'équipe YDA, nous avons reçu les premières références : des tours reprenant les grandes directives esthétiques souhaitées pour la façade extérieure. Nous avons analysé ces références pour distinguer les gestes répétitifs et dégager un esprit général.
+Via nos échanges avec l'équipe YDA, nous avons reçu les premières références : des tours reprenant les grandes directives esthétiques souhaitées pour la façade extérieure. Nous avons analysé ces références pour distinguer les gestes répétitifs et dégager un esprit général.
 
 ---
 
