@@ -76,7 +76,7 @@ export default async function ArticlePage({ params, searchParams }: ArticlePageP
 
   return (
     <div className="min-h-screen">
-      <div className="max-w-[900px] mx-auto px-6 md:px-12">
+      <div className="max-w-[730px] mx-auto px-6 md:px-8">
         {/* Back navigation */}
         <div className="pt-8 flex items-center justify-between">
           <Link
@@ -112,17 +112,20 @@ export default async function ArticlePage({ params, searchParams }: ArticlePageP
               </span>
             )}
           </div>
-          <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-neutral-900 leading-tight">
+          <h1 className="text-[2.5rem] md:text-[3.25rem] font-bold tracking-tight text-neutral-900 leading-[1.15]">
             {article.title}
           </h1>
-          <p className="mt-4 text-neutral-500 text-lg md:text-xl leading-relaxed">
+          <p className="mt-5 text-neutral-500 text-[1.125rem] md:text-[1.25rem] leading-relaxed">
             {article.excerpt}
           </p>
         </section>
 
+        {/* Thin separator */}
+        <div className="border-t border-black/10 mb-10" />
+
         {/* Hero image */}
         {article.thumbnail && (
-          <section className="mb-12">
+          <section className="mb-10">
             <div className="relative aspect-[16/9] overflow-hidden bg-neutral-100">
               <Image
                 src={article.thumbnail}
@@ -130,7 +133,7 @@ export default async function ArticlePage({ params, searchParams }: ArticlePageP
                 fill
                 className="object-cover"
                 priority
-                sizes="(max-width: 900px) 100vw, 900px"
+                sizes="(max-width: 730px) 100vw, 730px"
               />
             </div>
           </section>

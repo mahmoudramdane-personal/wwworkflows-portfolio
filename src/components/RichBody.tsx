@@ -53,7 +53,7 @@ export default function RichBody({ body, bodyMedia }: RichBodyProps) {
                   </h3>
                 ),
                 p: ({ children }) => (
-                  <p className="text-neutral-600 text-[15px] leading-[1.75] mb-4">
+                  <p className="text-neutral-600 text-[1.125rem] leading-[1.7] mb-5">
                     {children}
                   </p>
                 ),
@@ -64,20 +64,20 @@ export default function RichBody({ body, bodyMedia }: RichBodyProps) {
                   <em className="italic text-neutral-700">{children}</em>
                 ),
                 ul: ({ children }) => (
-                  <ul className="list-disc pl-6 space-y-1.5 text-neutral-600 text-[15px] leading-[1.75] mb-4">
+                  <ul className="list-disc pl-6 space-y-1.5 text-neutral-600 text-[1.125rem] leading-[1.7] mb-5">
                     {children}
                   </ul>
                 ),
                 ol: ({ children }) => (
-                  <ol className="list-decimal pl-6 space-y-1.5 text-neutral-600 text-[15px] leading-[1.75] mb-4">
+                  <ol className="list-decimal pl-6 space-y-1.5 text-neutral-600 text-[1.125rem] leading-[1.7] mb-5">
                     {children}
                   </ol>
                 ),
                 li: ({ children }) => (
-                  <li className="text-neutral-600">{children}</li>
+                  <li className="text-neutral-600 text-[1.125rem] leading-[1.7]">{children}</li>
                 ),
                 blockquote: ({ children }) => (
-                  <blockquote className="border-l-2 border-neutral-300 pl-6 py-1 text-neutral-500 italic text-[15px] leading-[1.75]">
+                  <blockquote className="border-l-2 border-neutral-300 pl-6 py-1 text-neutral-500 italic text-[1.125rem] leading-[1.7]">
                     {children}
                   </blockquote>
                 ),
@@ -102,7 +102,7 @@ export default function RichBody({ body, bodyMedia }: RichBodyProps) {
                   </th>
                 ),
                 td: ({ children }) => (
-                  <td className="py-2.5 pr-6 text-neutral-600 text-[15px]">{children}</td>
+                  <td className="py-2.5 pr-6 text-neutral-600 text-[1.125rem]">{children}</td>
                 ),
                 a: ({ href, children }) => (
                   <a
