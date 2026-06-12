@@ -127,18 +127,7 @@ function mapBodyMedia(assets: any[] | undefined): MediaAsset[] {
 
 // --- Articles ---
 
-const fallbackArticles: Article[] = [
-  {
-    title: "Pourquoi le Computational Design change la donne en architecture",
-    slug: "computational-design-architecture",
-    excerpt: "Le Computational Design n'est pas un gadget technologique — c'est une refonte fondamentale de la manière dont on conçoit, coordonne et livre des projets architecturaux.",
-    body: "## Le problème\n\nContenu placeholder.",
-    category: "Insights",
-    date: "2025-06-15",
-    thumbnail: "https://placehold.co/1200x675/f1f1f1/999?text=Article",
-    order: 1,
-  },
-];
+const fallbackArticles: Article[] = [];
 
 export async function getArticles(
   locale?: Locale
