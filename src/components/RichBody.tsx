@@ -77,12 +77,12 @@ export default function RichBody({ body, bodyMedia }: RichBodyProps) {
                   <li className="text-neutral-600">{children}</li>
                 ),
                 blockquote: ({ children }) => (
-                  <blockquote className="border-l-2 border-accent/20 pl-6 py-1 text-neutral-500 italic text-[15px] leading-[1.75]">
+                  <blockquote className="border-l-2 border-neutral-300 pl-6 py-1 text-neutral-500 italic text-[15px] leading-[1.75]">
                     {children}
                   </blockquote>
                 ),
                 hr: () => (
-                  <hr className="border-t border-accent/10 my-8" />
+                  <hr className="border-t border-black/10 my-8" />
                 ),
                 table: ({ children }) => (
                   <div className="overflow-x-auto mb-5">
@@ -107,7 +107,7 @@ export default function RichBody({ body, bodyMedia }: RichBodyProps) {
                 a: ({ href, children }) => (
                   <a
                     href={href}
-                    className="text-accent underline underline-offset-4 decoration-accent/30 hover:decoration-accent transition-all"
+                    className="text-neutral-900 underline underline-offset-4 hover:text-neutral-600 transition-colors"
                     target="_blank"
                     rel="noopener noreferrer"
                   >

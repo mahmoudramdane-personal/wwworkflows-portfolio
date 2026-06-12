@@ -22,15 +22,14 @@ export default async function ArticlesPage() {
         </h1>
         <p className="mt-4 text-neutral-500 text-base md:text-lg max-w-2xl leading-relaxed">
           {lang === "fr"
-            ? "Réflexions sur le Computational Design, l&apos;architecture paramétrique et la technologie de construction."
+            ? "Réflexions sur le Computational Design, l'architecture paramétrique et la technologie de construction."
             : "Thoughts on Computational Design, parametric architecture, and construction technology."}
         </p>
-        <div className="mt-8 w-16 h-0.5 bg-accent/30" />
       </section>
 
       {/* Articles grid */}
       <section className="pb-24">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {articles.map((article) => (
             <ArticleCard key={`${article.slug}-${locale}`} article={article} lang={lang} />
           ))}
@@ -63,48 +62,42 @@ function ArticleCard({
   return (
     <Link
       href={`/article/${article.slug}`}
-      className="group block bg-white/80 backdrop-blur-sm rounded-xl border border-neutral-200/60 overflow-hidden transition-all duration-300 hover:shadow-lg hover:shadow-black/5 hover:border-accent/20 hover:-translate-y-0.5"
+      className="group block"
     >
       {/* Thumbnail */}
-      <div className="relative aspect-[16/10] overflow-hidden bg-accent-muted/30">
-        {article.thumbnail ? (
+      <div className="relative aspect-[16/10] overflow-hidden bg-neutral-100 mb-4">
+        {article.thumbnail && (
           <Image
             src={article.thumbnail}
             alt={article.title}
             fill
-            className="object-cover transition-all duration-500 group-hover:scale-[1.03]"
+            className="object-cover transition-transform duration-500 group-hover:scale-[1.02]"
             sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
           />
-        ) : (
-          <div className="absolute inset-0 flex items-center justify-center">
-            <span className="text-accent/20 text-6xl font-serif">W</span>
-          </div>
         )}
       </div>
 
-      <div className="p-5 md:p-6">
-        {/* Meta */}
-        <div className="flex items-center gap-3 mb-3">
-          {article.category && (
-            <span className="text-[10px] tracking-[0.15em] uppercase text-accent/70 font-medium">
-              {article.category}
-            </span>
-          )}
-          <span className="text-[10px] tracking-[0.1em] text-neutral-400">
-            {formattedDate}
+      {/* Meta */}
+      <div className="flex items-center gap-3 mb-3">
+        {article.category && (
+          <span className="text-[10px] tracking-[0.15em] uppercase text-neutral-400">
+            {article.category}
           </span>
-        </div>
-
-        {/* Title */}
-        <h2 className="text-lg font-semibold text-neutral-900 leading-snug mb-2 group-hover:text-accent transition-colors duration-300">
-          {article.title}
-        </h2>
-
-        {/* Excerpt */}
-        <p className="text-sm text-neutral-500 leading-relaxed line-clamp-3">
-          {article.excerpt}
-        </p>
+        )}
+        <span className="text-[10px] tracking-[0.1em] text-neutral-300">
+          {formattedDate}
+        </span>
       </div>
+
+      {/* Title */}
+      <h2 className="text-lg font-medium text-neutral-900 leading-snug mb-2 group-hover:opacity-70 transition-opacity duration-300">
+        {article.title}
+      </h2>
+
+      {/* Excerpt */}
+      <p className="text-sm text-neutral-500 leading-relaxed line-clamp-3">
+        {article.excerpt}
+      </p>
     </Link>
   );
 }
