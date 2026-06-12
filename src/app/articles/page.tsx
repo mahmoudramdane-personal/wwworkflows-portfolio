@@ -1,22 +1,29 @@
 import { getArticles } from "@/lib/contentful";
+import { detectLang } from "@/lib/locale";
 import Image from "next/image";
 import Link from "next/link";
+import { headers } from "next/headers";
 
 export const revalidate = 60;
 
 export default async function ArticlesPage() {
-  const articles = await getArticles();
+  const hdrs = await headers();
+  const acceptLanguage = hdrs.get("accept-language");
+  const lang = detectLang(acceptLanguage);
+  const locale = lang === "fr" ? "fr" as const : "en-US" as const;
+  const articles = await getArticles(locale);
 
   return (
     <div className="max-w-[1400px] mx-auto px-6 md:px-12">
       {/* Header */}
       <section className="pt-24 pb-16 md:pt-32 md:pb-20">
         <h1 className="text-3xl md:text-5xl font-bold tracking-tight text-neutral-900">
-          Articles
+          {lang === "fr" ? "Articles" : "Articles"}
         </h1>
         <p className="mt-4 text-neutral-500 text-base md:text-lg max-w-2xl leading-relaxed">
-          Réflexions sur le Computational Design, l&apos;architecture
-          paramétrique et la technologie de construction.
+          {lang === "fr"
+            ? "Réflexions sur le Computational Design, l&apos;architecture paramétrique et la technologie de construction."
+            : "Thoughts on Computational Design, parametric architecture, and construction technology."}
         </p>
       </section>
 
@@ -24,7 +31,7 @@ export default async function ArticlesPage() {
       <section className="pb-24">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {articles.map((article) => (
-            <ArticleCard key={article.slug} article={article} />
+            <ArticleCard key={`${article.slug}-${locale}`} article={article} lang={lang} />
           ))}
         </div>
       </section>
@@ -34,6 +41,7 @@ export default async function ArticlesPage() {
 
 function ArticleCard({
   article,
+  lang,
 }: {
   article: {
     title: string;
@@ -43,8 +51,9 @@ function ArticleCard({
     date: string;
     thumbnail?: string;
   };
+  lang: string;
 }) {
-  const formattedDate = new Date(article.date).toLocaleDateString("fr-FR", {
+  const formattedDate = new Date(article.date).toLocaleDateString(lang === "fr" ? "fr-FR" : "en-US", {
     year: "numeric",
     month: "long",
     day: "numeric",

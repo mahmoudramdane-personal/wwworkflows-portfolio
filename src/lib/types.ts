@@ -50,6 +50,7 @@ export interface Article {
   date: string;
   thumbnail?: string;
   order?: number;
+  lang?: string;
 }
 
 export interface AboutPage {

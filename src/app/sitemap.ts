@@ -6,7 +6,7 @@ export const revalidate = 60;
 const BASE = "https://wwworkflows.com";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const [projects, articles] = await Promise.all([getProjects(), getArticles()]);
+  const [projects, articles] = await Promise.all([getProjects(), getArticles("en-US")]);
 
   const staticRoutes: MetadataRoute.Sitemap = [
     { url: BASE,                  changeFrequency: "weekly",  priority: 1.0 },
@@ -21,11 +21,20 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.9,
   }));
 
-  const articleRoutes: MetadataRoute.Sitemap = articles.map((a) => ({
-    url: `${BASE}/article/${a.slug}`,
-    changeFrequency: "monthly",
-    priority: 0.8,
-  }));
+  const articleRoutes: MetadataRoute.Sitemap = articles.flatMap((a) => [
+    {
+      url: `${BASE}/article/${a.slug}`,
+      changeFrequency: "monthly",
+      priority: 0.8,
+      alternates: {
+        languages: {
+          "x-default": `${BASE}/article/${a.slug}`,
+          fr: `${BASE}/article/${a.slug}?lang=fr`,
+          en: `${BASE}/article/${a.slug}?lang=en`,
+        },
+      },
+    },
+  ]);
 
   return [...staticRoutes, ...projectRoutes, ...articleRoutes];
 }

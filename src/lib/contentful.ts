@@ -1,5 +1,6 @@
 import { createClient } from "contentful";
 import { Project, MediaAsset, AboutPage, ContactPage, Article } from "./types";
+import type { Locale, SiteLang } from "./locale";
 
 const client =
   process.env.CONTENTFUL_SPACE_ID && process.env.CONTENTFUL_ACCESS_TOKEN
@@ -139,13 +140,17 @@ const fallbackArticles: Article[] = [
   },
 ];
 
-export async function getArticles(): Promise<Article[]> {
+export async function getArticles(
+  locale?: Locale
+): Promise<Article[]> {
   if (!client) return fallbackArticles;
 
   try {
     const entries = await client.getEntries({
       content_type: "article",
+      "fields.category[ne]": "AFW",
       order: ["-fields.date"] as const,
+      locale: locale || "en-US",
     });
 
     if (!entries.items.length) return fallbackArticles;
@@ -162,20 +167,23 @@ export async function getArticles(): Promise<Article[]> {
         ? `https:${item.fields.thumbnail.fields.file.url}`
         : "https://placehold.co/1200x675/f1f1f1/999?text=Article",
       order: item.fields.order || 0,
+      lang: locale || "en-US",
     }));
   } catch {
     return fallbackArticles;
   }
 }
 
-export async function getArticleBySlug(slug: string): Promise<Article | null> {
+export async function getArticleBySlug(slug: string, locale?: Locale): Promise<Article | null> {
   if (!client) return fallbackArticles.find((a) => a.slug === slug) || null;
 
   try {
     const entries = await client.getEntries({
       content_type: "article",
+      "fields.category[ne]": "AFW",
       "fields.slug": slug,
       limit: 1,
+      locale: locale || "en-US",
     });
 
     if (!entries.items.length) {
@@ -195,6 +203,7 @@ export async function getArticleBySlug(slug: string): Promise<Article | null> {
         ? `https:${item.fields.thumbnail.fields.file.url}`
         : "https://placehold.co/1200x675/f1f1f1/999?text=Article",
       order: item.fields.order || 0,
+      lang: locale || "en-US",
     };
   } catch {
     return fallbackArticles.find((a) => a.slug === slug) || null;

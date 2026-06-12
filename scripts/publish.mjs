@@ -31,7 +31,9 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const SPACE_ID = process.env.CONTENTFUL_SPACE_ID;
 const MANAGEMENT_TOKEN = process.env.CONTENTFUL_MANAGEMENT_TOKEN;
-const LOCALE = "en-US"; // Change if your Contentful space uses a different locale
+const LOCALE_EN = "en-US";
+const LOCALE_FR = "fr";
+const LOCALES = [LOCALE_EN, LOCALE_FR];
 const ENV_ID = "master";
 
 const MAX_BODY_PX = 1600;  // max width for in-body images (display up to ~1304px)
@@ -118,7 +120,7 @@ File not found: ${absPath}
 
     console.log(`  → Uploading to Contentful...`);
     const asset = await uploadAsset(env, optimizedPath, ref.filename, mimeType, forceAssets);
-    const rawUrl = asset.fields?.file?.[LOCALE]?.url;
+    const rawUrl = asset.fields?.file?.[LOCALE_EN]?.url;
     uploadedAssets[ref.filename] = {
       id: asset.sys.id,
       url: rawUrl ? `https:${rawUrl}` : null,
@@ -269,7 +271,7 @@ async function uploadAsset(env, filePath, originalFilename, mimeType, forceAsset
   if (!forceAssets) {
     const existing = await env.getAssets({ limit: 100 });
     const found = existing.items.find((a) => {
-      const file = a.fields?.file?.[LOCALE];
+      const file = a.fields?.file?.[LOCALE_EN];
       return file && file.fileName === originalFilename;
     });
 
@@ -283,24 +285,26 @@ async function uploadAsset(env, filePath, originalFilename, mimeType, forceAsset
   const fileBuffer = fs.readFileSync(filePath);
   const upload = await env.createUpload({ file: fileBuffer });
 
-  // Create asset entry
-  let asset = await env.createAsset({
-    fields: {
-      title: { [LOCALE]: originalFilename },
-      file: {
-        [LOCALE]: {
-          contentType: mimeType,
-          fileName: originalFilename,
-          uploadFrom: {
-            sys: { type: "Link", linkType: "Upload", id: upload.sys.id },
-          },
-        },
+  // Create asset entry with both locales
+  const assetFields = { title: {}, file: {} };
+  for (const locale of LOCALES) {
+    assetFields.title[locale] = originalFilename;
+    assetFields.file[locale] = {
+      contentType: mimeType,
+      fileName: originalFilename,
+      uploadFrom: {
+        sys: { type: "Link", linkType: "Upload", id: upload.sys.id },
       },
-    },
+    };
+  }
+  let asset = await env.createAsset({
+    fields: assetFields,
   });
 
-  // Trigger CDN processing
-  await asset.processForLocale(LOCALE);
+  // Trigger CDN processing for both locales
+  for (const locale of LOCALES) {
+    await asset.processForLocale(locale);
+  }
 
   // Poll until URL is available (processing takes 2–10s)
   asset = await waitForProcessing(env, asset.sys.id);
@@ -313,7 +317,7 @@ async function uploadAsset(env, filePath, originalFilename, mimeType, forceAsset
 async function waitForProcessing(env, assetId, maxAttempts = 20) {
   for (let i = 0; i < maxAttempts; i++) {
     const asset = await env.getAsset(assetId);
-    if (asset.fields?.file?.[LOCALE]?.url) return asset;
+    if (asset.fields?.file?.[LOCALE_EN]?.url) return asset;
     process.stdout.write(i === 0 ? "     Processing." : ".");
     await sleep(2000);
   }
@@ -377,22 +381,43 @@ function transformBodyArticle(body, assets) {
 // ─── Contentful entry upsert ──────────────────────────────────────────────────────────
 
 async function upsertArticle(env, fm, body, assets, fullOverwrite = false) {
-  const fields = {
-    title:    { [LOCALE]: fm.title },
-    slug:     { [LOCALE]: fm.slug },
-    excerpt:  { [LOCALE]: fm.excerpt || "" },
-    body:     { [LOCALE]: body },
-    category: { [LOCALE]: fm.category || "" },
-    date:     { [LOCALE]: fm.date instanceof Date ? fm.date.toISOString().split("T")[0] : String(fm.date) },
-    order:    { [LOCALE]: Number(fm.order) || 0 },
+  // Build locale-specific fields
+  const buildFields = (locale) => {
+    const prefix = locale === LOCALE_FR ? "_fr" : "";
+    const title = fm[`title${prefix}`] || fm.title;
+    const excerpt = fm[`excerpt${prefix}`] || fm.excerpt || "";
+    const slug = fm.slug;
+    const bodyKey = locale === LOCALE_FR ? "body_fr" : "body";
+    const bodyValue = fm[bodyKey] || body;
+
+    const fields = {
+      title:    { [locale]: title },
+      slug:     { [locale]: slug },
+      excerpt:  { [locale]: excerpt },
+      body:     { [locale]: bodyValue },
+      category: { [locale]: fm.category || "" },
+      date:     { [locale]: fm.date instanceof Date ? fm.date.toISOString().split("T")[0] : String(fm.date) },
+      order:    { [locale]: Number(fm.order) || 0 },
+    };
+
+    // Thumbnail link
+    const thumbBase = fm.thumbnail ? path.basename(fm.thumbnail) : null;
+    if (thumbBase && assets[thumbBase]) {
+      fields.thumbnail = {
+        [locale]: { sys: { type: "Link", linkType: "Asset", id: assets[thumbBase].id } },
+      };
+    }
+
+    return fields;
   };
 
-  // Thumbnail link
-  const thumbBase = fm.thumbnail ? path.basename(fm.thumbnail) : null;
-  if (thumbBase && assets[thumbBase]) {
-    fields.thumbnail = {
-      [LOCALE]: { sys: { type: "Link", linkType: "Asset", id: assets[thumbBase].id } },
-    };
+  // Merge locale-specific fields into one object for upsertEntry
+  const mergedFields = {};
+  for (const locale of LOCALES) {
+    const localeFields = buildFields(locale);
+    for (const [key, value] of Object.entries(localeFields)) {
+      mergedFields[key] = { ...(mergedFields[key] || {}), ...value };
+    }
   }
 
   // Note: articles use inline markdown image URLs instead of bodyMedia
@@ -403,29 +428,29 @@ async function upsertArticle(env, fm, body, assets, fullOverwrite = false) {
   const preserve = fullOverwrite
     ? new Set()
     : new Set(["title", "slug", "excerpt", "category", "date", "order", "thumbnail"]);
-  await upsertEntry(env, "article", fm.slug, fields, preserve);
+  await upsertEntry(env, "article", fm.slug, mergedFields, preserve);
 }
 
 async function upsertProject(env, fm, body, assets, fullOverwrite = false) {
   const fields = {
-    title:         { [LOCALE]: fm.title },
-    slug:          { [LOCALE]: fm.slug },
-    subtitle:      { [LOCALE]: fm.subtitle || "" },
-    client:        { [LOCALE]: fm.client || "" },
-    year:          { [LOCALE]: Number(fm.year) || new Date().getFullYear() },
-    location:      { [LOCALE]: fm.location || "" },
-    category:      { [LOCALE]: fm.category || "" },
-    status:        { [LOCALE]: fm.status || "" },
-    collaborators: { [LOCALE]: fm.collaborators || "" },
-    order:         { [LOCALE]: Number(fm.order) || 0 },
-    body:          { [LOCALE]: body },
+    title:         { [LOCALE_EN]: fm.title },
+    slug:          { [LOCALE_EN]: fm.slug },
+    subtitle:      { [LOCALE_EN]: fm.subtitle || "" },
+    client:        { [LOCALE_EN]: fm.client || "" },
+    year:          { [LOCALE_EN]: Number(fm.year) || new Date().getFullYear() },
+    location:      { [LOCALE_EN]: fm.location || "" },
+    category:      { [LOCALE_EN]: fm.category || "" },
+    status:        { [LOCALE_EN]: fm.status || "" },
+    collaborators: { [LOCALE_EN]: fm.collaborators || "" },
+    order:         { [LOCALE_EN]: Number(fm.order) || 0 },
+    body:          { [LOCALE_EN]: body },
   };
 
   // Thumbnail
   const thumbBase = fm.thumbnail ? path.basename(fm.thumbnail) : null;
   if (thumbBase && assets[thumbBase]) {
     fields.thumbnail = {
-      [LOCALE]: { sys: { type: "Link", linkType: "Asset", id: assets[thumbBase].id } },
+      [LOCALE_EN]: { sys: { type: "Link", linkType: "Asset", id: assets[thumbBase].id } },
     };
   }
 
@@ -433,14 +458,14 @@ async function upsertProject(env, fm, body, assets, fullOverwrite = false) {
   const heroBase = fm.heroImage ? path.basename(fm.heroImage) : null;
   if (heroBase && assets[heroBase]) {
     fields.heroImage = {
-      [LOCALE]: { sys: { type: "Link", linkType: "Asset", id: assets[heroBase].id } },
+      [LOCALE_EN]: { sys: { type: "Link", linkType: "Asset", id: assets[heroBase].id } },
     };
   }
 
   // bodyMedia
   const bodyMediaLinks = getBodyMediaLinks(body, assets);
   if (bodyMediaLinks.length) {
-    fields.bodyMedia = { [LOCALE]: bodyMediaLinks };
+    fields.bodyMedia = { [LOCALE_EN]: bodyMediaLinks };
   }
 
   // On safe update: only body + bodyMedia are synced from Obsidian; everything else preserves Contentful edits.
