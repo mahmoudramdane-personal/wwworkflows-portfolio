@@ -24,6 +24,18 @@ export const metadata: Metadata = {
     siteName: "WWWorkflows",
     locale: "fr_FR",
     type: "website",
+    images: [
+      {
+        url: "/logo.png",
+        width: 400,
+        height: 214,
+        alt: "WWWorkflows",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary",
+    images: ["/logo.png"],
   },
 };
 
