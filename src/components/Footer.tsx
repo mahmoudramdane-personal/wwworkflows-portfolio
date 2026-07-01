@@ -37,6 +37,14 @@ export default function Footer() {
             >
               Articles
             </Link>
+            <a
+              href="https://afterworkworkflow.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-neutral-400 text-xs tracking-[0.08em] uppercase hover:text-neutral-900 transition-colors duration-300"
+            >
+              Formation
+            </a>
             <Link
               href="/contact"
               className="text-neutral-400 text-xs tracking-[0.08em] uppercase hover:text-neutral-900 transition-colors duration-300"

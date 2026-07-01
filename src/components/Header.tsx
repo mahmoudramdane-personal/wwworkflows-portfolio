@@ -11,6 +11,7 @@ export default function Header() {
     { href: "/", label: "Projets" },
     { href: "/about", label: "Studio" },
     { href: "/articles", label: "Articles" },
+    { href: "https://afterworkworkflow.com", label: "Formation", external: true },
     { href: "/contact", label: "Contact" },
   ];
 
@@ -31,7 +32,21 @@ export default function Header() {
         {/* Navigation */}
         <nav className="flex items-center gap-8">
           {navLinks.map((link) => {
-            const isActive = pathname === link.href;
+            const isActive = !link.external && pathname === link.href;
+            if (link.external) {
+              return (
+                <a
+                  key={link.href}
+                  href={link.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="relative text-xs tracking-[0.12em] uppercase transition-all duration-300 group text-neutral-400 hover:text-neutral-900 hover:font-semibold"
+                >
+                  {link.label}
+                  <span className="absolute -bottom-1 left-0 h-[1.5px] bg-neutral-900 transition-all duration-300 ease-out w-0 group-hover:w-full" />
+                </a>
+              );
+            }
             return (
               <Link
                 key={link.href}
