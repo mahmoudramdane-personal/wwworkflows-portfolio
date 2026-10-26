@@ -209,10 +209,25 @@ function collectMediaRefs(body, fm, attachmentsDir) {
     add(path.basename(m[1]));
   }
 
+  // Body: éclaté  {{eclate:nom|légendes}}  → toutes les couches nom-1.png … nom-N.png de attachments/
+  for (const m of body.matchAll(/\{\{eclate:([^|}]+)/g)) {
+    for (const f of coucheseclate(m[1].trim(), attachmentsDir)) add(f);
+  }
+
   // Filter to files that actually exist
   return [...refs.values()].filter((ref) =>
     fs.existsSync(path.join(attachmentsDir, ref.filename))
   );
+}
+
+// Couches d'un éclaté : nom-1.png, nom-2.png… (même convention que RichBody)
+function coucheseclate(nom, dossier) {
+  if (!fs.existsSync(dossier)) return [];
+  const prefixe = `${nom.toLowerCase()}-`;
+  return fs.readdirSync(dossier).filter((f) => {
+    if (!f.toLowerCase().startsWith(prefixe)) return false;
+    return /^\d+\.(png|webp)$/i.test(f.slice(prefixe.length));
+  });
 }
 
 // ─── Asset optimization ──────────────────────────────────────────────────────────
@@ -481,6 +496,13 @@ function getBodyMediaLinks(body, assets) {
   for (const m of body.matchAll(/\{\{(?:media|video):([^}]+)\}\}/g)) {
     const filename = m[1];
     if (assets[filename]) ids.add(assets[filename].id);
+  }
+  // Couches des éclatés : RichBody les retrouve dans bodyMedia par leur nom
+  for (const m of body.matchAll(/\{\{eclate:([^|}]+)/g)) {
+    const prefixe = `${m[1].trim().toLowerCase()}-`;
+    for (const [filename, a] of Object.entries(assets)) {
+      if (filename.toLowerCase().startsWith(prefixe) && /^\d+\.(png|webp)$/i.test(filename.slice(prefixe.length))) ids.add(a.id);
+    }
   }
   return [...ids].map((id) => ({ sys: { type: "Link", linkType: "Asset", id } }));
 }
