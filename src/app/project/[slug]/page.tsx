@@ -4,6 +4,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { CATEGORY_LABELS, Category } from "@/lib/types";
 import RichBody from "@/components/RichBody";
+import OutilsLecture from "@/components/OutilsLecture";
+import CarteCas from "@/components/CarteCas";
+import { titresDe, minutesDeLecture } from "@/lib/titres";
 import type { Metadata } from "next";
 
 export const revalidate = 60;
@@ -44,111 +47,92 @@ export async function generateMetadata({ params }: ProjectPageProps): Promise<Me
 
 export default async function ProjectPage({ params }: ProjectPageProps) {
   const { slug } = await params;
-  const project = await getProjectBySlug(slug);
+  const [project, projects] = await Promise.all([getProjectBySlug(slug), getProjects()]);
 
   if (!project) {
     notFound();
   }
 
+  const titres = titresDe(project.body);
+  const categorie = CATEGORY_LABELS[project.category as Category] || project.category;
+  const rang = projects.findIndex((p) => p.slug === project.slug);
+  const suivant = projects.length > 1 ? projects[(rang + 1) % projects.length] : null;
+
   return (
-    <div className="bg-white min-h-screen -mt-16 pt-16">
-      <div className="max-w-[1400px] mx-auto px-6 md:px-12">
-        {/* Back navigation */}
-        <div className="pt-8">
-          <Link
-            href="/"
-            className="text-neutral-400 text-xs tracking-[0.12em] uppercase hover:text-neutral-900 transition-colors duration-300"
-          >
-            &larr; Retour aux projets
+    <>
+      {/* En-tête du cas d'études */}
+      <section className="fond-grille border-b border-encre">
+        <div className="max-w-[1240px] mx-auto px-4 md:px-8 pt-10 pb-12 md:pt-14 md:pb-16">
+          <Link href="/#cas-etudes" className="mono text-gris hover:text-bleu transition-colors duration-300">
+            &larr; Tous les cas d&apos;études
           </Link>
+          <div className="mt-10 flex flex-wrap items-center gap-3">
+            <span className="mono px-2.5 py-1.5 bg-bleu text-white">
+              {categorie} · {project.year}
+            </span>
+            <span className="mono text-gris">Lecture · {minutesDeLecture(project.body)} min</span>
+          </div>
+          <h1 className="titre-large mt-6 text-4xl md:text-6xl lg:text-[4.6rem] leading-[1.02] max-w-5xl">{project.title}</h1>
+          <p className="mt-6 max-w-3xl text-lg md:text-xl leading-relaxed text-gris">{project.subtitle}</p>
+
+          <dl className="mt-10 grid grid-cols-2 md:grid-cols-4 border-t border-encre">
+            <Fiche label="Client" value={project.client} />
+            <Fiche label="Lieu" value={project.location} />
+            <Fiche label="Statut" value={project.status} />
+            <Fiche label="Équipe" value={project.collaborators} />
+          </dl>
         </div>
+      </section>
 
-        {/* Title section */}
-        <section className="pt-12 pb-8 md:pt-16 md:pb-12">
-          <h1 className="text-3xl md:text-5xl font-bold tracking-tight text-neutral-900">
-            {project.title}
-          </h1>
-          <p className="mt-4 text-neutral-500 text-base md:text-lg leading-relaxed">
-            {project.subtitle}
-          </p>
-        </section>
-
-        {/* Metadata bar */}
-        <section className="border-t border-b border-black/10 py-6 mb-12">
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
-            <MetaItem label="Client" value={project.client} />
-            <MetaItem label="Catégorie" value={CATEGORY_LABELS[project.category as Category] || project.category} />
-            <MetaItem label="Année" value={String(project.year)} />
-            <MetaItem label="Lieu" value={project.location} />
-            <MetaItem label="Statut" value={project.status} />
-            {project.collaborators && (
-              <MetaItem label="Collaborateurs" value={project.collaborators} />
-            )}
+      {/* Image principale */}
+      {project.heroImage && (
+        <section className="max-w-[1240px] mx-auto px-4 md:px-8 pt-10 md:pt-14">
+          <div className="relative aspect-[16/9] overflow-hidden border border-encre bg-trait">
+            <Image src={project.heroImage} alt={project.title} fill className="object-cover" priority sizes="(max-width: 1240px) 100vw, 1176px" />
           </div>
         </section>
+      )}
 
-        {/* Hero image — remove from Contentful entry to hide */}
-        {project.heroImage && (
-          <section className="mb-12">
-            <div className="relative aspect-[16/9] overflow-hidden bg-neutral-100">
-              <Image
-                src={project.heroImage}
-                alt={project.title}
-                fill
-                className="object-cover"
-                priority
-                sizes="(max-width: 1400px) 100vw, 1400px"
-              />
-            </div>
-          </section>
-        )}
-
-        {/* Body content — full width */}
-        <section className="mb-16">
+      {/* Texte : feuille blanche au centre, sommaire à gauche sur grand écran */}
+      <section className="px-4 md:px-8 pt-10 md:pt-14">
+        <article id="texte-cas" className="relative mx-auto max-w-[820px] bg-blanc border border-encre px-5 py-10 md:px-14 md:py-16">
+          <OutilsLecture titres={titres} />
           <RichBody body={project.body} bodyMedia={project.bodyMedia} />
-        </section>
 
-        {/* Project images gallery */}
-        {project.images.length > 0 && (
-          <section className="space-y-6 mb-24">
-            {project.images.map((src, i) => (
-              <div
-                key={i}
-                className="relative aspect-[16/9] overflow-hidden bg-neutral-100"
-              >
-                <Image
-                  src={src}
-                  alt={`${project.title} — ${i + 1}`}
-                  fill
-                  className="object-cover"
-                  sizes="(max-width: 1400px) 100vw, 1400px"
-                />
-              </div>
-            ))}
-          </section>
-        )}
+          {project.images.length > 0 && (
+            <div className="mt-10 grid gap-6">
+              {project.images.map((src, i) => (
+                <div key={i} className="relative aspect-[16/9] overflow-hidden bg-trait">
+                  <Image src={src} alt={`${project.title} — ${i + 1}`} fill className="object-cover" sizes="(max-width: 820px) 100vw, 708px" />
+                </div>
+              ))}
+            </div>
+          )}
+        </article>
+      </section>
 
-        {/* Next project CTA */}
-        <section className="border-t border-black/10 py-12 text-center">
-          <Link
-            href="/"
-            className="text-neutral-400 text-xs tracking-[0.12em] uppercase hover:text-neutral-900 transition-colors duration-300"
-          >
-            Voir tous les projets &rarr;
-          </Link>
+      {/* Cas suivant */}
+      {suivant && (
+        <section className="max-w-[1240px] mx-auto px-4 md:px-8 pt-20 md:pt-28">
+          <div className="flex items-baseline justify-between border-b border-encre pb-4 mb-10">
+            <h2 className="mono text-encre">Cas d&apos;études suivant</h2>
+            <Link href="/#cas-etudes" className="mono text-gris hover:text-bleu transition-colors duration-300">
+              Tous les cas →
+            </Link>
+          </div>
+          <CarteCas project={suivant} numero={((rang + 1) % projects.length) + 1} />
         </section>
-      </div>
-    </div>
+      )}
+    </>
   );
 }
 
-function MetaItem({ label, value }: { label: string; value: string }) {
+function Fiche({ label, value }: { label: string; value?: string }) {
+  if (!value) return null;
   return (
-    <div>
-      <dt className="text-neutral-400 text-[10px] tracking-[0.15em] uppercase mb-1">
-        {label}
-      </dt>
-      <dd className="text-neutral-900 text-sm">{value}</dd>
+    <div className="py-4 pr-4 border-b border-trait">
+      <dt className="mono text-gris mb-1.5">{label}</dt>
+      <dd className="text-encre text-[15px]">{value}</dd>
     </div>
   );
 }

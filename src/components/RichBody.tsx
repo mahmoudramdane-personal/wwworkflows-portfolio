@@ -3,6 +3,15 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { MediaAsset } from "@/lib/types";
 import AnimatedMedia from "./AnimatedMedia";
+import { idTitre } from "@/lib/titres";
+
+// Texte brut d'un enfant React (pour l'ancre d'un intertitre)
+function texteDe(n: React.ReactNode): string {
+  if (typeof n === "string" || typeof n === "number") return String(n);
+  if (Array.isArray(n)) return n.map(texteDe).join("");
+  if (n && typeof n === "object" && "props" in n) return texteDe((n as { props: { children?: React.ReactNode } }).props.children);
+  return "";
+}
 
 interface RichBodyProps {
   body: string;
@@ -38,51 +47,51 @@ export default function RichBody({ body, bodyMedia }: RichBodyProps) {
               remarkPlugins={[remarkGfm]}
               components={{
                 h1: ({ children }) => (
-                  <h1 className="text-2xl md:text-3xl font-semibold text-neutral-900 mt-12 mb-4">
+                  <h1 className="titre-large text-3xl md:text-4xl leading-tight mt-14 mb-5">
                     {children}
                   </h1>
                 ),
                 h2: ({ children }) => (
-                  <h2 className="text-lg font-semibold text-neutral-900 mt-10 mb-3">
+                  <h2 id={idTitre(texteDe(children))} className="titre-large text-2xl md:text-[2rem] leading-[1.12] mt-14 mb-5">
                     {children}
                   </h2>
                 ),
                 h3: ({ children }) => (
-                  <h3 className="text-[15px] font-semibold text-neutral-900 mt-6 mb-2">
+                  <h3 className="text-lg font-bold mt-8 mb-3">
                     {children}
                   </h3>
                 ),
                 p: ({ children }) => (
-                  <p className="text-neutral-600 text-[1.125rem] leading-[1.7] mb-5">
+                  <p className="text-encre/85 text-[1.08rem] md:text-[1.125rem] leading-[1.75] mb-5">
                     {children}
                   </p>
                 ),
                 strong: ({ children }) => (
-                  <strong className="font-semibold text-neutral-900">{children}</strong>
+                  <strong className="font-bold text-encre">{children}</strong>
                 ),
                 em: ({ children }) => (
-                  <em className="italic text-neutral-700">{children}</em>
+                  <em className="italic">{children}</em>
                 ),
                 ul: ({ children }) => (
-                  <ul className="list-disc pl-6 space-y-1.5 text-neutral-600 text-[1.125rem] leading-[1.7] mb-5">
+                  <ul className="list-disc pl-6 space-y-1.5 text-encre/85 text-[1.08rem] md:text-[1.125rem] leading-[1.75] mb-5">
                     {children}
                   </ul>
                 ),
                 ol: ({ children }) => (
-                  <ol className="list-decimal pl-6 space-y-1.5 text-neutral-600 text-[1.125rem] leading-[1.7] mb-5">
+                  <ol className="list-decimal pl-6 space-y-1.5 text-encre/85 text-[1.08rem] md:text-[1.125rem] leading-[1.75] mb-5">
                     {children}
                   </ol>
                 ),
                 li: ({ children }) => (
-                  <li className="text-neutral-600 text-[1.125rem] leading-[1.7]">{children}</li>
+                  <li className="text-encre/85 text-[1.08rem] md:text-[1.125rem] leading-[1.75]">{children}</li>
                 ),
                 blockquote: ({ children }) => (
-                  <blockquote className="border-l-2 border-neutral-300 pl-6 py-1 text-neutral-500 italic text-[1.125rem] leading-[1.7]">
+                  <blockquote className="border-l-2 border-bleu bg-bleu-pale/60 pl-6 pr-4 py-3 text-encre/80 text-[1.05rem] leading-[1.7]">
                     {children}
                   </blockquote>
                 ),
                 hr: () => (
-                  <hr className="border-t border-black/10 my-8" />
+                  <hr className="border-t border-trait my-10" />
                 ),
                 table: ({ children }) => (
                   <div className="overflow-x-auto mb-5">
@@ -92,22 +101,22 @@ export default function RichBody({ body, bodyMedia }: RichBodyProps) {
                   </div>
                 ),
                 thead: ({ children }) => (
-                  <thead className="border-b border-black/10 text-neutral-900">
+                  <thead className="border-b border-encre text-encre">
                     {children}
                   </thead>
                 ),
                 th: ({ children }) => (
-                  <th className="py-2.5 pr-6 text-xs tracking-[0.1em] uppercase text-neutral-400 font-medium">
+                  <th className="py-2.5 pr-6 font-mono text-[10.5px] tracking-[0.1em] uppercase text-gris font-medium">
                     {children}
                   </th>
                 ),
                 td: ({ children }) => (
-                  <td className="py-2.5 pr-6 text-neutral-600 text-[1.125rem]">{children}</td>
+                  <td className="py-2.5 pr-6 text-encre/85 text-[15px] border-b border-trait">{children}</td>
                 ),
                 a: ({ href, children }) => (
                   <a
                     href={href}
-                    className="text-neutral-900 underline underline-offset-4 hover:text-neutral-600 transition-colors"
+                    className="text-bleu underline underline-offset-4 decoration-1 hover:text-encre transition-colors"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
@@ -117,7 +126,7 @@ export default function RichBody({ body, bodyMedia }: RichBodyProps) {
                 // eslint-disable-next-line @next/next/no-img-element
                 img: ({ src, alt }) => (
                   <figure className="my-4">
-                    <div className="relative overflow-hidden bg-neutral-100">
+                    <div className="relative overflow-hidden bg-trait">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
                         src={src}
@@ -206,7 +215,7 @@ function renderMedia(filename: string, bodyMedia: MediaAsset[], key: number) {
 
   return (
     <figure key={key} className="my-4">
-      <div className="relative overflow-hidden bg-neutral-100">
+      <div className="relative overflow-hidden bg-trait">
         {isGif ? (
           <AnimatedMedia src={asset.url} alt={filename} />
         ) : (
@@ -216,7 +225,7 @@ function renderMedia(filename: string, bodyMedia: MediaAsset[], key: number) {
             width={asset.width || 1600}
             height={asset.height || 900}
             className="w-full h-auto"
-            sizes="(max-width: 768px) calc(100vw - 48px), (max-width: 1400px) calc(100vw - 96px), 1304px"
+            sizes="(max-width: 820px) calc(100vw - 72px), 708px"
           />
         )}
       </div>
@@ -227,7 +236,7 @@ function renderMedia(filename: string, bodyMedia: MediaAsset[], key: number) {
 function renderYouTube(videoId: string, key: number) {
   return (
     <figure key={key} className="my-4">
-      <div className="relative aspect-video overflow-hidden bg-neutral-100">
+      <div className="relative aspect-video overflow-hidden bg-trait">
         <iframe
           src={`https://www.youtube-nocookie.com/embed/${videoId}`}
           title="YouTube video"
@@ -247,7 +256,7 @@ function renderMiro(value: string, key: number) {
 
   return (
     <figure key={key} className="my-4">
-      <div className="relative aspect-video overflow-hidden bg-neutral-100">
+      <div className="relative aspect-video overflow-hidden bg-trait">
         <iframe
           src={src}
           title="Miro board"
@@ -270,7 +279,7 @@ function renderVideo(filename: string, bodyMedia: MediaAsset[], key: number) {
 
   return (
     <figure key={key} className="my-4">
-      <div className="relative overflow-hidden bg-neutral-100">
+      <div className="relative overflow-hidden bg-trait">
         <video
           src={asset.url}
           controls

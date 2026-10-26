@@ -1,72 +1,57 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 import { usePathname } from "next/navigation";
+import Monogramme from "./Monogramme";
 
 export default function Header() {
   const pathname = usePathname();
 
   const navLinks = [
-    { href: "/", label: "Projets" },
-    { href: "/about", label: "Studio" },
+    { href: "/#cas-etudes", label: "Cas d'études" },
     { href: "/articles", label: "Articles" },
-    { href: "https://afterworkworkflow.com", label: "Formation", external: true },
-    { href: "/contact", label: "Contact" },
+    { href: "/about", label: "Studio" },
   ];
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-[#f1f1f1]/90 backdrop-blur-sm border-b border-black/5">
-      <div className="max-w-[1400px] mx-auto px-6 md:px-12 flex items-center justify-between h-16">
-        {/* Logo */}
-        <Link href="/" className="group">
-          <Image
-            src="/logo.png"
-            alt="WWWorkflows"
-            width={56}
-            height={30}
-            className="transition-opacity duration-300 group-hover:opacity-60"
-          />
+    <header className="fixed top-0 left-0 right-0 z-50 bg-papier/90 backdrop-blur-sm border-b border-encre">
+      <div className="max-w-[1240px] mx-auto px-4 md:px-8 flex items-center justify-between h-16 gap-4">
+        <Link href="/" className="text-encre hover:text-bleu transition-colors duration-300" aria-label="WWWORKFLOWS, accueil">
+          <Monogramme className="h-[18px] w-auto" />
         </Link>
 
-        {/* Navigation */}
-        <nav className="flex items-center gap-8">
+        <nav className="hidden md:flex items-center gap-8">
           {navLinks.map((link) => {
-            const isActive = !link.external && pathname === link.href;
-            if (link.external) {
-              return (
-                <a
-                  key={link.href}
-                  href={link.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="relative text-xs tracking-[0.12em] uppercase transition-all duration-300 group text-neutral-400 hover:text-neutral-900 hover:font-semibold"
-                >
-                  {link.label}
-                  <span className="absolute -bottom-1 left-0 h-[1.5px] bg-neutral-900 transition-all duration-300 ease-out w-0 group-hover:w-full" />
-                </a>
-              );
-            }
+            const actif = pathname === link.href;
             return (
               <Link
                 key={link.href}
                 href={link.href}
-                className={`relative text-xs tracking-[0.12em] uppercase transition-all duration-300 group ${
-                  isActive
-                    ? "text-neutral-900 font-semibold"
-                    : "text-neutral-400 hover:text-neutral-900 hover:font-semibold"
-                }`}
+                className={`mono transition-colors duration-300 ${actif ? "text-bleu" : "text-encre hover:text-bleu"}`}
               >
                 {link.label}
-                <span
-                  className={`absolute -bottom-1 left-0 h-[1.5px] bg-neutral-900 transition-all duration-300 ease-out ${
-                    isActive ? "w-full" : "w-0 group-hover:w-full"
-                  }`}
-                />
               </Link>
             );
           })}
         </nav>
+
+        <div className="flex items-center gap-2">
+          {/* Lien vers l'école : les deux sites se répondent */}
+          <a
+            href="https://afterworkworkflow.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mono hidden sm:inline-flex items-center px-3 py-2 border border-encre text-encre hover:bg-encre hover:text-papier transition-colors duration-300"
+          >
+            Formation ↗
+          </a>
+          <Link
+            href="/contact"
+            className="mono inline-flex items-center px-3 py-2 bg-bleu text-white border border-bleu hover:bg-encre hover:border-encre transition-colors duration-300"
+          >
+            Contact
+          </Link>
+        </div>
       </div>
     </header>
   );

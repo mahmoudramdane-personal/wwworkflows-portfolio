@@ -1,47 +1,85 @@
 @import "tailwindcss";
 
+/* Charte WWWORKFLOWS (25.10.26) : la grammaire d'Afterwork Workflow, en plus sobre.
+   Papier froid, encre, traits fins, un seul accent : le bleu #2B44FF. */
 :root {
-  --background: #F9F9F9;
-  --foreground: #1a1a1a;
+  --papier: #F3F3F0;
+  --blanc: #FFFFFF;
+  --encre: #111114;
+  --gris: #66666C;
+  --trait: #D6D6D1;
+  --grille: #E6E6E1;
+  --bleu: #2B44FF;
+  --bleu-pale: #E8EBFF;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-papier: var(--papier);
+  --color-blanc: var(--blanc);
+  --color-encre: var(--encre);
+  --color-gris: var(--gris);
+  --color-trait: var(--trait);
+  --color-bleu: var(--bleu);
+  --color-bleu-pale: var(--bleu-pale);
+  --font-sans: var(--font-archivo), "Helvetica Neue", Arial, sans-serif;
+  --font-mono: var(--font-martian), ui-monospace, Consolas, monospace;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
+  background: var(--papier);
+  color: var(--encre);
 }
 
-/* Smooth scrolling */
 html {
   scroll-behavior: smooth;
+  scroll-padding-top: 96px;
 }
 
-/* Selection color */
 ::selection {
-  background: rgba(0, 0, 0, 0.08);
-  color: #1a1a1a;
+  background: var(--bleu);
+  color: #fff;
 }
 
-/* Custom scrollbar */
-::-webkit-scrollbar {
-  width: 6px;
+/* Étiquettes en mono, comme sur afterworkworkflow.com */
+.mono {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
 }
 
-::-webkit-scrollbar-track {
-  background: #ffffff;
+/* Titres larges */
+.titre-large {
+  font-stretch: 112%;
+  font-weight: 800;
+  letter-spacing: -0.02em;
 }
 
-::-webkit-scrollbar-thumb {
-  background: #ddd;
-  border-radius: 3px;
+/* Grille fine du papier, seulement derrière l'en-tête de page */
+.fond-grille {
+  background-image:
+    linear-gradient(var(--grille) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grille) 1px, transparent 1px);
+  background-size: 24px 24px;
 }
 
-::-webkit-scrollbar-thumb:hover {
-  background: #bbb;
+/* Apparition au défilement (voir Apparition.tsx) */
+.apparait {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.8s cubic-bezier(0.2, 0.7, 0.2, 1), transform 0.8s cubic-bezier(0.2, 0.7, 0.2, 1);
 }
+.apparait.visible {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .apparait { opacity: 1; transform: none; transition: none; }
+}
+
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--papier); }
+::-webkit-scrollbar-thumb { background: #c8c8c3; }
+::-webkit-scrollbar-thumb:hover { background: var(--bleu); }

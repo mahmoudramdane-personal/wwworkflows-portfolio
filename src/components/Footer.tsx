@@ -1,63 +1,38 @@
-import Image from "next/image";
 import Link from "next/link";
+import Monogramme from "./Monogramme";
 
 export default function Footer() {
+  const liens = [
+    { href: "/#cas-etudes", label: "Cas d'études" },
+    { href: "/articles", label: "Articles" },
+    { href: "/about", label: "Studio" },
+    { href: "/contact", label: "Contact" },
+  ];
+
   return (
-    <footer className="border-t border-black/5 py-12 mt-24">
-      <div className="max-w-[1400px] mx-auto px-6 md:px-12">
-        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-8">
-          {/* Logo */}
-          <Link href="/" className="group">
-            <Image
-              src="/logo.png"
-              alt="WWWorkflows"
-              width={32}
-              height={18}
-              className="opacity-25 transition-opacity duration-300 group-hover:opacity-50"
-            />
-          </Link>
+    <footer className="border-t border-encre mt-24">
+      <div className="max-w-[1240px] mx-auto px-4 md:px-8 py-12 flex flex-col md:flex-row items-start md:items-center justify-between gap-8">
+        <Link href="/" className="text-encre hover:text-bleu transition-colors duration-300" aria-label="WWWORKFLOWS, accueil">
+          <Monogramme className="h-[14px] w-auto" />
+        </Link>
 
-          {/* Nav */}
-          <nav className="flex items-center gap-6">
-            <Link
-              href="/"
-              className="text-neutral-400 text-xs tracking-[0.08em] uppercase hover:text-neutral-900 transition-colors duration-300"
-            >
-              Projets
+        <nav className="flex flex-wrap items-center gap-x-6 gap-y-3">
+          {liens.map((l) => (
+            <Link key={l.href} href={l.href} className="mono text-gris hover:text-bleu transition-colors duration-300">
+              {l.label}
             </Link>
-            <Link
-              href="/about"
-              className="text-neutral-400 text-xs tracking-[0.08em] uppercase hover:text-neutral-900 transition-colors duration-300"
-            >
-              Studio
-            </Link>
-            <Link
-              href="/articles"
-              className="text-neutral-400 text-xs tracking-[0.08em] uppercase hover:text-neutral-900 transition-colors duration-300"
-            >
-              Articles
-            </Link>
-            <a
-              href="https://afterworkworkflow.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-neutral-400 text-xs tracking-[0.08em] uppercase hover:text-neutral-900 transition-colors duration-300"
-            >
-              Formation
-            </a>
-            <Link
-              href="/contact"
-              className="text-neutral-400 text-xs tracking-[0.08em] uppercase hover:text-neutral-900 transition-colors duration-300"
-            >
-              Contact
-            </Link>
-          </nav>
+          ))}
+          <a
+            href="https://afterworkworkflow.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mono text-gris hover:text-bleu transition-colors duration-300"
+          >
+            Formation ↗
+          </a>
+        </nav>
 
-          {/* Copyright */}
-          <span className="text-neutral-300 text-[10px] tracking-[0.1em]">
-            &copy; {new Date().getFullYear()} WWWorkflows
-          </span>
-        </div>
+        <span className="mono text-gris">&copy; {new Date().getFullYear()} WWWORKFLOWS</span>
       </div>
     </footer>
   );

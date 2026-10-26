@@ -1,13 +1,20 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Archivo, Martian_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
-const inter = Inter({
-  variable: "--font-inter",
+const archivo = Archivo({
+  variable: "--font-archivo",
+  subsets: ["latin"],
+  axes: ["wdth"],
+  display: "swap",
+});
+
+const martian = Martian_Mono({
+  variable: "--font-martian",
   subsets: ["latin"],
   display: "swap",
 });
@@ -15,13 +22,13 @@ const inter = Inter({
 export const metadata: Metadata = {
   metadataBase: new URL("https://wwworkflows.com"),
   title: {
-    default: "WWWorkflows — Studio de Design Computationnel",
-    template: "%s — WWWorkflows",
+    default: "WWWORKFLOWS — Design computationnel et intelligence artificielle pour les architectes",
+    template: "%s — WWWORKFLOWS",
   },
   description:
-    "Computational Design as a Service. Systèmes algorithmiques de façade, planification paramétrique de fabrication et automatisation digitale pour l'architecture.",
+    "Un partenaire créatif pour les architectes et designers. Nous développons des workflows algorithmiques, avec le design computationnel et l'intelligence artificielle, qui aident à imaginer, modéliser et produire.",
   openGraph: {
-    siteName: "WWWorkflows",
+    siteName: "WWWORKFLOWS",
     locale: "fr_FR",
     type: "website",
     images: [
@@ -29,7 +36,7 @@ export const metadata: Metadata = {
         url: "/logo.png",
         width: 400,
         height: 214,
-        alt: "WWWorkflows",
+        alt: "WWWORKFLOWS",
       },
     ],
   },
@@ -46,7 +53,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="fr">
-      <body className={`${inter.variable} font-sans antialiased bg-[#f1f1f1] text-neutral-900`}>
+      <body className={`${archivo.variable} ${martian.variable} font-sans antialiased bg-papier text-encre`}>
         <Header />
         <main className="pt-16">{children}</main>
         <Footer />
