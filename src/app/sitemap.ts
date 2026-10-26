@@ -1,7 +1,5 @@
-import { getProjects } from "@/lib/contentful";
+import { getProjects } from "@/lib/contenu";
 import { MetadataRoute } from "next";
-
-export const revalidate = 60;
 
 const BASE = "https://wwworkflows.com";
 

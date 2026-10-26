@@ -1,0 +1,41 @@
+{
+  "title": "Studio",
+  "intro": "Nous contribuons à la réalisation de structures complexes, de géométries de forme libre et à l'automatisation des processus de conception et de fabrication grâce à la planification paramétrique en 3D et l'interopérabilité BIM.\n\nChez Workflows, nous disposons d'une expertise, d'une flexibilité de service et d'une performance orientée projet. Nous portons une double casquette : architectes designers et technologistes.\n\nNotre motivation est de réaliser des projets non-standards à travers l'utilisation créative de la technologie. La clé du succès réside dans la création d'algorithmes exclusifs, développés sur la base de projets spécifiques.\n\nNotre objectif est de combiner complexité technique et cohérence esthétique. L'approche innovante des projets oblige à penser au-delà des normes établies. Nous nous appuyons sur un vaste réseau international d'architectes, de programmeurs, d'artistes, de planificateurs spécialisés et d'entreprises de fabrication.",
+  "services": [
+    {
+      "title": "Design de Systèmes de Façade",
+      "description": "Approche paramétrique pour le design de façades complexes, murs-rideaux et systèmes double peau."
+    },
+    {
+      "title": "Panelisation & Optimisation",
+      "description": "Rationalisation géométrique, optimisation de panneaux et découpe pour la fabrication digitale."
+    },
+    {
+      "title": "Études de Faisabilité",
+      "description": "Analyse de faisabilité technique et géométrique pour des géométries complexes et non-standards."
+    },
+    {
+      "title": "Form Finding & Structures Complexes",
+      "description": "Recherche de forme structurelle, optimisation topologique et modélisation de structures à géométrie libre."
+    },
+    {
+      "title": "Design d'Ornement",
+      "description": "Systèmes paramétriques de moucharabieh, motifs génératifs et patterns architecturaux."
+    },
+    {
+      "title": "Landscape Design",
+      "description": "Design paramétrique paysager, topographie algorithmique et aménagement urbain génératif."
+    }
+  ],
+  "tools": [
+    "Rhino",
+    "Grasshopper",
+    "Revit",
+    "Python",
+    "Ladybug",
+    "Hops",
+    "Lumion",
+    "AutoCAD",
+    "Miro"
+  ]
+}

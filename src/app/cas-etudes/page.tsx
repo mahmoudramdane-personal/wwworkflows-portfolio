@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
-import { getProjects } from "@/lib/contentful";
+import { getProjects } from "@/lib/contenu";
 import SectionCas from "@/components/SectionCas";
-
-export const revalidate = 60;
 
 export const metadata: Metadata = {
   title: "Cas d'études",

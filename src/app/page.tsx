@@ -1,11 +1,9 @@
 import Link from "next/link";
-import { getProjects, getAboutPage } from "@/lib/contentful";
+import { getProjects, getAboutPage } from "@/lib/contenu";
 import SectionCas from "@/components/SectionCas";
 import SectionReferences from "@/components/SectionReferences";
 import SectionServices from "@/components/SectionServices";
 import GrainDegrade from "@/components/GrainDegrade";
-
-export const revalidate = 60;
 
 export default async function Home() {
   // Page d'accueil = landing page : accroche, références, cas d'études, services, puis le contact (footer)

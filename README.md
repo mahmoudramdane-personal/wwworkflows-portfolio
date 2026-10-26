@@ -2,16 +2,16 @@
 
 Portfolio / case study site for **WWWorkflows** — Computational Design Studio.
 
-Built with Next.js 16, Tailwind CSS 4, TypeScript, and Contentful CMS.
+Built with Next.js 16, Tailwind CSS 4 and TypeScript. Content lives in this repository (no CMS since 26.10.26).
 Visual direction inspired by [vorhammer.net](https://vorhammer.net/).
 
 ## Tech Stack
 
 | Layer       | Technology           |
 |-------------|----------------------|
-| Framework   | Next.js 16 (App Router, ISR) |
+| Framework   | Next.js 16 (App Router, static) |
 | Styling     | Tailwind CSS 4       |
-| CMS         | Contentful (Headless) |
+| Content     | Markdown notes + images in `public/cas-etudes/`, JSON in `src/content/` |
 | Language    | TypeScript           |
 | Hosting     | Vercel               |
 | Analytics   | Vercel Analytics + Speed Insights |
@@ -39,13 +39,20 @@ src/
 │   ├── CategoryFilter.tsx        # Category filter buttons
 │   └── RichBody.tsx              # Rich content renderer (Markdown + media embeds)
 ├── lib/
-│   ├── types.ts                  # Project, Article, AboutPage, ContactPage interfaces
-│   └── contentful.ts             # Contentful client + all fetch functions + fallbacks
-└── data/
-    └── projects.ts               # Mock projects (fallback when Contentful not configured)
+│   ├── types.ts                  # Project, Article, AboutPage interfaces
+│   ├── contenu.ts                # getProjects / getProjectBySlug / getAboutPage
+│   ├── cas-etudes.ts             # Reads public/cas-etudes/<slug>/note.md (+ local previews)
+│   └── articles.ts               # Articles from src/content/articles.json
+└── content/
+    ├── articles.json             # Articles
+    └── studio.json               # Studio page (intro, services, tools)
+
+public/
+├── cas-etudes/<slug>/            # One folder per published case study: note.md + WebP images
+└── apercu/<slug>/                # Local previews, gitignored, dev only
 
 scripts/
-└── publish.mjs                   # Obsidian → Contentful publish pipeline
+└── publier-cas.mjs               # public/apercu/<slug> → public/cas-etudes/<slug> (WebP)
 
 docs/
 └── plans/                        # Design docs and implementation plans
@@ -73,97 +80,18 @@ npm run build     # production build
 npm start         # production server
 ```
 
-The site runs with **mock data** by default. To connect Contentful, see below.
+## Content (no CMS)
 
-## Contentful Setup
+Contentful was dropped on 26.10.26 (full backup in `06_SITE-WEB/_CONTENTFUL_SAUVEGARDE_261026/`, outside the repo).
 
-### 1. Create a Contentful Space
-
-1. Go to [app.contentful.com](https://app.contentful.com)
-2. Create a new **Space** (free tier works)
-3. Go to **Settings > API keys** — create a new API key
-4. Copy the **Space ID** and **Content Delivery API access token**
-
-### 2. Configure Environment
+- **Case study** = `public/cas-etudes/<slug>/note.md` (frontmatter: title, subtitle, client, year, location, category, status, collaborators, order, thumbnail, heroImage) + its images. The URL is `/project/<slug>`.
+- **Preview** a new case study in `public/apercu/<slug>/` (gitignored, shown by `npm run dev` only), then publish it locally:
 
 ```bash
-cp .env.local.example .env.local
+npm run publier-cas -- <slug>
 ```
 
-Edit `.env.local`:
-```
-CONTENTFUL_SPACE_ID=your_space_id
-CONTENTFUL_ACCESS_TOKEN=your_delivery_token
-CONTENTFUL_MANAGEMENT_TOKEN=your_personal_access_token   # for publish script only
-```
-
-Get the Management Token from: Contentful → click your avatar → Account Settings → Tokens → Personal access tokens.
-
-### 3. Content Models
-
-#### Case Study (`caseStudy`)
-
-| Field Name      | Field ID        | Type            | Required |
-|-----------------|-----------------|-----------------|----------|
-| Title           | `title`         | Short text      | Yes      |
-| Slug            | `slug`          | Short text      | Yes      |
-| Subtitle        | `subtitle`      | Short text      | Yes      |
-| Client          | `client`        | Short text      | Yes      |
-| Year            | `year`          | Integer         | Yes      |
-| Location        | `location`      | Short text      | Yes      |
-| Category        | `category`      | Short text      | Yes      |
-| Status          | `status`        | Short text      | Yes      |
-| Collaborators   | `collaborators` | Short text      | No       |
-| Order           | `order`         | Integer         | No       |
-| Thumbnail       | `thumbnail`     | Media (image)   | Yes      |
-| Hero Image      | `heroImage`     | Media (image)   | No — if empty, the hero section is hidden on the page (still used for OG/social preview) |
-| Body            | `body`          | Long text       | Yes      |
-| Project Images  | `projectImages` | Media (many)    | No       |
-| Body Media      | `bodyMedia`     | Media (many)    | No       |
-
-Category values: `facade-design`, `algorithmic-systems`, `fabrication-planning`, `landscape-urban`, `interior`
-
-#### Article (`article`)
-
-| Field Name  | Field ID    | Type          | Required |
-|-------------|-------------|---------------|----------|
-| Title       | `title`     | Short text    | Yes      |
-| Slug        | `slug`      | Short text    | Yes      |
-| Excerpt     | `excerpt`   | Short text    | Yes      |
-| Body        | `body`      | Long text     | Yes      |
-| Category    | `category`  | Short text    | No       |
-| Date        | `date`      | Date          | Yes      |
-| Thumbnail   | `thumbnail` | Media (image) | No       |
-| Body Media  | `bodyMedia` | Media (many)  | No       |
-| Order       | `order`     | Integer       | No       |
-
-#### About Page (`aboutPage`) and Contact Page (`contactPage`)
-
-Managed via the `getAboutPage()` and `getContactPage()` functions in `src/lib/contentful.ts`. Both have hardcoded fallbacks — Contentful entries are optional.
-
-## Publishing from Obsidian
-
-Write articles and case studies in Obsidian, then publish with one command. See **`OBSIDIAN_WRITING_GUIDE.md`** for the full reference.
-
-**Quick start:**
-
-1. Add `CONTENTFUL_MANAGEMENT_TOKEN` to `.env.local`
-2. Write your note with the correct frontmatter (see guide)
-3. Run:
-
-```bash
-npm run publish-note "C:/path/to/Obsidian/Articles/My Article/note.md"
-```
-
-The script automatically:
-- Converts JPG/PNG → WebP (resized for web)
-- Converts GIFs → animated WebP (resized + −70 to −90% file size; handles large GIFs via `limitInputPixels: false`)
-- Uploads all assets to Contentful (skips if already uploaded)
-- Transforms Obsidian embed syntax to the site's format
-- Creates or updates the Contentful entry and publishes it
-- Content goes live in ~60 seconds via ISR
-
-> **Note:** Articles use inline CDN image URLs in the body (no `bodyMedia` field required). Case studies use `bodyMedia` asset links.
+It converts images to WebP (GIF → animated WebP), rewrites the note, and moves it to `public/cas-etudes/<slug>/`. Nothing goes online before `git push` to `main` (Vercel deploys it). The repository is **public**: no drafts, nothing awaiting client approval, no keys.
 
 ## Rich Media in Body Content
 

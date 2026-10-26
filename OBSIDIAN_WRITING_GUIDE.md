@@ -170,15 +170,15 @@ Paragraphe normal avec du **texte en gras** et de l’*italique*.
 - [ ] Le `slug` est unique, en minuscules, sans espaces ni accents
 - [ ] La `thumbnail` existe dans `attachments/`
 - [ ] Tous les noms de fichiers dans `attachments/` sont sans espaces
-- [ ] `CONTENTFUL_MANAGEMENT_TOKEN` est dans `.env.local`
+- [ ] L'aperçu a été relu dans `public/apercu/<slug>/` avec `npm run dev`
 
 ## Commande de publication
 
 ```bash
-npm run publish-note "C:/chemin/vers/Obsidian/Articles/Mon Article/note.md"
+npm run publier-cas -- <slug>
 ```
 
-L’article sera en ligne en moins de 60 secondes.
+Le cas passe de `public/apercu/<slug>/` à `public/cas-etudes/<slug>/` (plus de Contentful depuis le 26.10.26). Il part en ligne au `git push` sur `main`, après le go de Mahmoud.
 
 ---
 

@@ -1,11 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { getAboutPage } from "@/lib/contentful";
+import { getAboutPage } from "@/lib/contenu";
 import Apparition from "@/components/Apparition";
 import SectionReferences from "@/components/SectionReferences";
 import SectionServices from "@/components/SectionServices";
-
-export const revalidate = 60;
 
 export const metadata: Metadata = {
   title: "Studio",

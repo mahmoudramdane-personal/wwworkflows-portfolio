@@ -11,12 +11,6 @@ const nextConfig: NextConfig = {
     ];
   },
   images: {
-    remotePatterns: [
-      {
-        protocol: "https",
-        hostname: "images.ctfassets.net",
-      },
-    ],
     unoptimized: true,
   },
 };

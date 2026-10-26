@@ -1,4 +1,4 @@
-import { getProjectBySlug, getProjects } from "@/lib/contentful";
+import { getProjectBySlug, getProjects } from "@/lib/contenu";
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
@@ -10,14 +10,7 @@ import CarteCas from "@/components/CarteCas";
 import { titresDe, minutesDeLecture } from "@/lib/titres";
 import type { Metadata } from "next";
 
-export const revalidate = 60;
 export const dynamicParams = true;
-
-// Cas dont le tableau Miro n'est plus montré (Mahmoud, 26.10.26) : la section « Tableau de travail »
-// et son embed sont retirés à l'affichage, Contentful reste intact.
-const SANS_MIRO = ["wwworkflows-yda-tours-casablanca"];
-const sansMiro = (body: string) =>
-  body.replace(/\n*(---\s*\n+)?## Tableau de travail\s*\n+\{\{miro:[^}]+\}\}\s*/g, "\n").replace(/\{\{miro:[^}]+\}\}/g, "");
 
 interface ProjectPageProps {
   params: Promise<{ slug: string }>;
@@ -59,7 +52,6 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
   if (!project) {
     notFound();
   }
-  if (SANS_MIRO.includes(project.slug)) project.body = sansMiro(project.body);
 
   const titres = titresDe(project.body);
   // Un embed placé tout en haut du texte (curseur, éclaté…) passe avant la fiche « En bref »
