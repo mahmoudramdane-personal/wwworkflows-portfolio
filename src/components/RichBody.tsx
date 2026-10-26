@@ -5,6 +5,7 @@ import { MediaAsset } from "@/lib/types";
 import AnimatedMedia from "./AnimatedMedia";
 import Eclate from "./Eclate";
 import Construction from "./Construction";
+import LamesH2A from "./LamesH2A";
 import { idTitre } from "@/lib/titres";
 
 // Texte brut d'un enfant React (pour l'ancre d'un intertitre)
@@ -43,6 +44,7 @@ export default function RichBody({ body, bodyMedia }: RichBodyProps) {
         if (segment.type === "miro") return renderMiro(segment.value, i);
         if (segment.type === "eclate") return renderEclate(segment.value, bodyMedia, i);
         if (segment.type === "construction") return renderConstruction(segment.value, bodyMedia, i);
+        if (segment.type === "module") return renderModule(segment.value, i);
 
         // Markdown content
         return (
@@ -155,7 +157,7 @@ export default function RichBody({ body, bodyMedia }: RichBodyProps) {
 // --- Helpers ---
 
 interface Segment {
-  type: "markdown" | "media" | "youtube" | "video" | "miro" | "eclate" | "construction";
+  type: "markdown" | "media" | "youtube" | "video" | "miro" | "eclate" | "construction" | "module";
   value: string;
 }
 
@@ -198,6 +200,13 @@ function splitMediaSegments(body: string): Segment[] {
     if (miroMatch) {
       flushMd();
       segments.push({ type: "miro", value: miroMatch[1] });
+      continue;
+    }
+
+    const moduleMatch = trimmed.match(/^\{\{module:(.+?)\}\}$/);
+    if (moduleMatch) {
+      flushMd();
+      segments.push({ type: "module", value: moduleMatch[1].trim() });
       continue;
     }
 
@@ -286,6 +295,12 @@ function renderEclate(value: string, bodyMedia: MediaAsset[], key: number) {
   });
   const { width = 1560, height = 940 } = calques[0].m;
   return <Eclate key={key} couches={couches} largeur={width} hauteur={height} />;
+}
+
+// {{module:nom}} : module interactif écrit pour un cas d'études précis
+function renderModule(nom: string, key: number) {
+  if (nom === "h2a-lames") return <LamesH2A key={key} />;
+  return null;
 }
 
 // {{construction:nom|Libellé#couleur:Phrase|…}} : images nom-<vue>-01.webp … dans bodyMedia, une série par angle

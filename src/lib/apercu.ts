@@ -9,7 +9,11 @@ import { Project, MediaAsset, Category } from "./types";
 // La page /project/<slug> affiche alors ce dossier avec le vrai gabarit.
 const RACINE = path.join(process.cwd(), "public", "apercu");
 
-export function lireApercu(slug: string): Project | null {
+// Mode insertion : frontmatter « insererApres: "<ligne exacte du corps Contentful>" ».
+// La page garde alors tout son contenu Contentful, et le corps de note.md est inséré après cette ligne.
+export type Apercu = Project & { insererApres?: string };
+
+export function lireApercu(slug: string): Apercu | null {
   if (process.env.NODE_ENV === "production") return null;
   const dossier = path.join(RACINE, slug);
   const note = path.join(dossier, "note.md");
@@ -87,5 +91,16 @@ export function lireApercu(slug: string): Project | null {
     body,
     images: [],
     bodyMedia,
+    insererApres: typeof data.insererApres === "string" ? data.insererApres.trim() : undefined,
   };
+}
+
+// Vraie page + bloc de l'aperçu inséré après la ligne repère (le bloc s'affiche à la fin si la ligne n'existe plus)
+export function fusionner(reel: Project, apercu: Apercu): Project {
+  const lignes = reel.body.split("\n");
+  const i = lignes.findIndex((l) => l.trim() === apercu.insererApres);
+  const bloc = ["", apercu.body, ""];
+  if (i < 0) lignes.push(...bloc);
+  else lignes.splice(i + 1, 0, ...bloc);
+  return { ...reel, body: lignes.join("\n"), bodyMedia: [...reel.bodyMedia, ...apercu.bodyMedia] };
 }
