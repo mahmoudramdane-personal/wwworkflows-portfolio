@@ -206,7 +206,7 @@ main { overflow-x: clip; }
   inset: -22px -56px;
   z-index: -1;
   /* teinte moyenne du papier sous le grain (#F3F3F0 + grain.png), pour que le halo ne fasse pas de tache claire */
-  background: var(--fond-net, #ECECE9);
+  background: var(--fond-net, #EDEDEA);
   opacity: 0;
   transition: opacity 0.6s ease;
   -webkit-mask-image: radial-gradient(closest-side, #000 62%, transparent 100%);

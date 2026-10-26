@@ -53,7 +53,7 @@ export default function Footer() {
       {/* Appel : écrire un projet (ancre #contact : bouton « Parler d'un projet » de l'accueil) */}
       <div id="contact" className="w-full max-w-[1240px] mx-auto px-4 md:px-8 pt-16 md:pt-24 pb-16 scroll-mt-16">
         <span className="mono text-white/70">Un projet, une question, une formation d&apos;équipe</span>
-        <h2 className="texte-net titre-large mt-6 text-4xl md:text-6xl lg:text-7xl leading-[1.02] max-w-4xl [--fond-net:#3048F7]">Parlons de votre prochain workflow.</h2>
+        <h2 className="texte-net titre-large mt-6 text-4xl md:text-6xl lg:text-7xl leading-[1.02] max-w-4xl [--fond-net:#3047F8]">Parlons de votre prochain workflow.</h2>
         <a
           href={`mailto:${EMAIL}`}
           className="group mt-10 inline-flex items-center gap-4 text-2xl md:text-4xl tracking-tight"
