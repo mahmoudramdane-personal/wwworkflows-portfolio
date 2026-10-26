@@ -1,13 +1,12 @@
 import Link from "next/link";
 import Image from "next/image";
-import { Project, CATEGORY_LABELS, Category } from "@/lib/types";
+import { Project } from "@/lib/types";
 
 const LAMES = 14;
 
-// Carte d'un cas d'études sur l'accueil : grande image, numéro, titre, sous-titre, fiche.
+// Carte d'un cas d'études sur l'accueil : grande image, numéro, titre, sous-titre, client et lieu.
 export default function CarteCas({ project, numero }: { project: Project; numero: number }) {
   const image = project.thumbnail || project.heroImage;
-  const categorie = CATEGORY_LABELS[project.category as Category] || project.category;
 
   return (
     <Link
@@ -56,8 +55,7 @@ export default function CarteCas({ project, numero }: { project: Project; numero
 
         <div className="flex items-end justify-between gap-4 border-t border-trait pt-4">
           <span className="mono text-gris">
-            {categorie}
-            {project.location ? ` · ${project.location}` : ""}
+            {[project.client, project.location].filter(Boolean).join(" · ")}
           </span>
           <span className="mono text-encre whitespace-nowrap transition-transform duration-300 group-hover:translate-x-1 group-hover:text-bleu">
             Lire →

@@ -12,8 +12,8 @@ order: 1
 category: facade-design
 status: Concours
 collaborators: Urban Archi Studio
-thumbnail: 00-hero.webp
-heroImage: 00-hero.webp
+thumbnail: rendu-principal.webp
+heroImage: rendu-principal.webp
 ---
 
 {{construction:uas-construction|Le bowl existant#A9A49B:La pelouse, le socle et les gradins reçus de l'agence.|Les poteaux#2F5DA8:Les fûts en béton, 104 poteaux principaux et 364 poteaux secondaires.|La sous-structure#2F5DA8:La sous-structure de façade, sur trois niveaux.|Les rubans#D0566F:Les quatre rubans de la peau, enroulés autour du bowl.|La structure de toiture#16666B:Structure, poutres de rive, câbles et porte-écrans.|La membrane#BFE0DB:La membrane et le polycarbonate qui couvrent les tribunes.}}
