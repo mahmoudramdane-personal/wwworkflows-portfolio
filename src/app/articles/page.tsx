@@ -1,103 +1,54 @@
-import { getArticles } from "@/lib/contentful";
-import { detectLang } from "@/lib/locale";
 import Image from "next/image";
 import Link from "next/link";
-import { headers } from "next/headers";
+import type { Metadata } from "next";
+import Apparition from "@/components/Apparition";
+import { listeArticles, dateLisible } from "@/lib/articles";
 
-export const revalidate = 60;
+export const metadata: Metadata = {
+  title: "Articles",
+  description: "Design computationnel, intelligence artificielle et pratique de l'architecture : nos articles.",
+};
 
-export default async function ArticlesPage() {
-  const hdrs = await headers();
-  const acceptLanguage = hdrs.get("accept-language");
-  const lang = detectLang(acceptLanguage);
-  const locale = lang === "fr" ? "fr" as const : "en-US" as const;
-  const articles = await getArticles(locale);
-
-  return (
-    <div className="max-w-[1400px] mx-auto px-6 md:px-12">
-      {/* Header */}
-      <section className="pt-24 pb-16 md:pt-32 md:pb-20">
-        <h1 className="text-3xl md:text-5xl font-bold tracking-tight text-neutral-900">
-          {lang === "fr" ? "Articles" : "Articles"}
-        </h1>
-        <p className="mt-4 text-neutral-500 text-base md:text-lg max-w-2xl leading-relaxed">
-          {lang === "fr"
-            ? "Réflexions sur le Computational Design, l'architecture paramétrique et la technologie de construction."
-            : "Thoughts on Computational Design, parametric architecture, and construction technology."}
-        </p>
-      </section>
-
-      {/* Articles grid */}
-      <section className="pb-24">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {articles.map((article) => (
-            <ArticleCard key={`${article.slug}-${locale}`} article={article} lang={lang} />
-          ))}
-        </div>
-      </section>
-    </div>
-  );
-}
-
-function ArticleCard({
-  article,
-  lang,
-}: {
-  article: {
-    title: string;
-    slug: string;
-    excerpt: string;
-    category?: string;
-    date: string;
-    thumbnail?: string;
-  };
-  lang: string;
-}) {
-  const formattedDate = new Date(article.date).toLocaleDateString(lang === "fr" ? "fr-FR" : "en-US", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
+export default function ArticlesPage() {
+  const articles = listeArticles();
 
   return (
-    <Link
-      href={`/article/${article.slug}`}
-      className="group block"
-    >
-      {/* Thumbnail */}
-      <div className="relative aspect-[16/10] overflow-hidden bg-neutral-100 mb-4">
-        {article.thumbnail && (
-          <Image
-            src={article.thumbnail}
-            alt={article.title}
-            fill
-            className="object-cover transition-transform duration-500 group-hover:scale-[1.02]"
-            sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
-          />
-        )}
-      </div>
-
-      {/* Meta */}
-      <div className="flex items-center gap-3 mb-3">
-        {article.category && (
-          <span className="text-[10px] tracking-[0.15em] uppercase text-neutral-400">
-            {article.category}
-          </span>
-        )}
-        <span className="text-[10px] tracking-[0.1em] text-neutral-300">
-          {formattedDate}
-        </span>
-      </div>
-
-      {/* Title */}
-      <h2 className="text-lg font-medium text-neutral-900 leading-snug mb-2 group-hover:opacity-70 transition-opacity duration-300">
-        {article.title}
-      </h2>
-
-      {/* Excerpt */}
-      <p className="text-sm text-neutral-500 leading-relaxed line-clamp-3">
-        {article.excerpt}
+    <section className="max-w-[1240px] mx-auto px-4 md:px-8 pt-16 md:pt-24">
+      <span className="mono text-gris">Articles · {String(articles.length).padStart(2, "0")}</span>
+      <h1 className="texte-net titre-large mt-6 text-4xl md:text-6xl leading-[1.04] max-w-3xl">Ce que nous apprenons en chemin.</h1>
+      <p className="mt-6 max-w-2xl text-lg leading-relaxed text-gris">
+        Design computationnel, intelligence artificielle et pratique de l&apos;architecture.
       </p>
-    </Link>
+
+      <div className="mt-14 md:mt-20 grid gap-x-10 gap-y-16 md:grid-cols-2 border-t border-encre pt-10">
+        {articles.map((a, i) => (
+          <Apparition key={a.slug} delai={(i % 2) * 120}>
+            <Link href={`/article/${a.slug}`} className="group block">
+              <div className="volet relative aspect-[16/9] overflow-hidden bg-trait">
+                <Image src={a.image} alt={a.imageAlt} fill className="object-cover" sizes="(max-width: 768px) 100vw, 590px" />
+                {/* Duotone bleu au repos, couleur au survol */}
+                <div className="duotone absolute inset-0 transition-opacity duration-500 group-hover:opacity-0" aria-hidden="true">
+                  <Image src={a.image} alt="" fill className="object-cover" sizes="(max-width: 768px) 100vw, 590px" />
+                </div>
+              </div>
+              <div className="mt-5 flex flex-wrap items-center gap-3">
+                <span className="mono text-bleu">{a.category}</span>
+                <span className="mono text-gris">
+                  {a.minutes ? `Lecture · ${a.minutes} min` : ""}
+                  {a.date ? ` · ${dateLisible(a.date)}` : ""}
+                </span>
+              </div>
+              <h2 className="titre-large mt-3 text-2xl md:text-3xl leading-tight transition-colors duration-300 group-hover:text-bleu">
+                {a.title}
+              </h2>
+              <p className="mt-3 text-gris leading-relaxed">{a.excerpt}</p>
+              <span className="mono mt-4 inline-block text-encre transition-transform duration-300 group-hover:translate-x-1 group-hover:text-bleu">
+                Lire →
+              </span>
+            </Link>
+          </Apparition>
+        ))}
+      </div>
+    </section>
   );
 }

@@ -48,11 +48,11 @@ html {
   text-transform: uppercase;
 }
 
-/* Titres larges */
+/* Titres : grotesque sobre, graisse moyenne, approche serrée (Mahmoud, 26.10.26 : le très gras faisait peu professionnel) */
 .titre-large {
-  font-stretch: 112%;
-  font-weight: 800;
-  letter-spacing: -0.02em;
+  font-stretch: 100%;
+  font-weight: 500;
+  letter-spacing: -0.035em;
 }
 
 /* Grille fine du papier, seulement derrière l'en-tête de page */
@@ -61,6 +61,51 @@ html {
     linear-gradient(var(--grille) 1px, transparent 1px),
     linear-gradient(90deg, var(--grille) 1px, transparent 1px);
   background-size: 24px 24px;
+}
+
+/* Images des cartes : duotone bleu (noirs → bleu, blancs → blanc) et trame de points */
+.duotone img {
+  filter: grayscale(1) contrast(1.15) brightness(1.05);
+}
+.duotone::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: var(--bleu);
+  mix-blend-mode: screen;
+}
+.duotone::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background-image: radial-gradient(circle, rgba(17, 17, 20, 0.28) 0.9px, transparent 1.4px);
+  background-size: 5px 5px;
+  mix-blend-mode: multiply;
+}
+/* Au survol, les lames du duotone se replient l'une après l'autre et laissent voir la couleur */
+.lame-duo {
+  transform-origin: left center;
+  transition: transform 0.55s cubic-bezier(0.6, 0, 0.2, 1);
+}
+.group:hover .lame-duo,
+.group:focus-visible .lame-duo {
+  transform: scaleX(0);
+}
+
+/* Façade de l'accueil : très pâle, encore plus effacée sous le texte (gauche) */
+.fondu-facade {
+  opacity: 0.85;
+  -webkit-mask-image: linear-gradient(90deg, rgba(0, 0, 0, 0.18) 0%, rgba(0, 0, 0, 0.3) 45%, #000 80%),
+    linear-gradient(180deg, #000 60%, transparent 100%);
+  -webkit-mask-composite: source-in;
+  mask-image: linear-gradient(90deg, rgba(0, 0, 0, 0.18) 0%, rgba(0, 0, 0, 0.3) 45%, #000 80%),
+    linear-gradient(180deg, #000 60%, transparent 100%);
+  mask-composite: intersect;
+}
+@media (max-width: 1023px) {
+  .fondu-facade { opacity: 0.45; -webkit-mask-image: linear-gradient(180deg, #000 60%, transparent); mask-image: linear-gradient(180deg, #000 60%, transparent); }
 }
 
 /* Apparition au défilement (voir Apparition.tsx) */
@@ -77,9 +122,96 @@ html {
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   .apparait { opacity: 1; transform: none; transition: none; }
+  .lame-duo { transition: none; }
 }
 
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: var(--papier); }
 ::-webkit-scrollbar-thumb { background: #c8c8c3; }
 ::-webkit-scrollbar-thumb:hover { background: var(--bleu); }
+
+/* Cas d'études : images hors de la colonne de texte, numérotées FIG. 01, 02… */
+.corps-cas { counter-reset: fig; }
+.figure-cas {
+  counter-increment: fig;
+  margin: 3rem 0 3.5rem;
+}
+.figure-cas::after {
+  content: "FIG. " counter(fig, decimal-leading-zero);
+  display: block;
+  margin-top: 0.75rem;
+  padding-top: 0.6rem;
+  border-top: 1px solid var(--trait);
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.12em;
+  color: var(--gris);
+}
+
+/* Notions de l'accueil : lien vers l'article, jamais coupées en fin de ligne */
+.lien-notion {
+  white-space: nowrap;
+  color: var(--encre);
+  font-weight: 600;
+  border-bottom: 2px solid var(--bleu);
+  transition: color 0.3s, background-color 0.3s;
+}
+.lien-notion:hover {
+  color: #fff;
+  background: var(--bleu);
+}
+
+/* Volet : un aplat bleu couvre l'image puis se retire quand elle entre dans l'écran */
+.volet::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  background: var(--bleu);
+  transform-origin: right;
+  transform: scaleX(1);
+  transition: transform 1s cubic-bezier(0.77, 0, 0.18, 1) 0.15s;
+  pointer-events: none;
+}
+.visible .volet::after,
+.volet.visible::after {
+  transform: scaleX(0);
+}
+@media (prefers-reduced-motion: reduce) {
+  .volet::after { display: none; }
+}
+
+/* Grain de pellicule DERRIÈRE le contenu : fond du papier ; les cadres, images et boutons pleins le couvrent */
+body {
+  background-image: url("/grain.png");
+  background-size: 256px 256px;
+}
+/* Même grain sous un aplat opaque (footer bleu, en-tête) */
+.grain-aplat {
+  background-image: url("/grain.png");
+  background-size: 256px 256px;
+}
+
+/* Rien ne dépasse sur les côtés (halos des titres, volets) : pas de défilement horizontal sur téléphone */
+main { overflow-x: clip; }
+
+/* Titres importants : quand le curseur s'en approche, le grain s'efface derrière eux (halo net, sans grain) */
+.texte-net {
+  position: relative;
+  isolation: isolate;
+}
+.texte-net::before {
+  content: "";
+  position: absolute;
+  inset: -22px -56px;
+  z-index: -1;
+  /* teinte moyenne du papier sous le grain (#F3F3F0 + grain.png), pour que le halo ne fasse pas de tache claire */
+  background: var(--fond-net, #ECECE9);
+  opacity: 0;
+  transition: opacity 0.6s ease;
+  -webkit-mask-image: radial-gradient(closest-side, #000 62%, transparent 100%);
+  mask-image: radial-gradient(closest-side, #000 62%, transparent 100%);
+}
+.texte-net:hover::before {
+  opacity: 1;
+}

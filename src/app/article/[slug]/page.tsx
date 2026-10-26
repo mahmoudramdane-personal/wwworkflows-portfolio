@@ -1,159 +1,97 @@
-import { getArticleBySlug, getArticles } from "@/lib/contentful";
-import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-import RichBody from "@/components/RichBody";
+import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { getLangFromRequest, getAlternateUrls, LOCALE_MAP } from "@/lib/locale";
-
-export const revalidate = 60;
-export const dynamicParams = true;
+import RichBody from "@/components/RichBody";
+import OutilsLecture from "@/components/OutilsLecture";
+import { titresDe, minutesDeLecture } from "@/lib/titres";
+import { listeArticles, articleParSlug, dateLisible } from "@/lib/articles";
 
 interface ArticlePageProps {
   params: Promise<{ slug: string }>;
-  searchParams?: Promise<{ lang?: string }>;
 }
 
-export async function generateStaticParams() {
-  const articles = await getArticles("en-US");
-  return articles.map((a) => ({ slug: a.slug }));
+export const dynamicParams = false;
+
+export function generateStaticParams() {
+  return listeArticles().map((a) => ({ slug: a.slug }));
 }
 
-export async function generateMetadata({ params, searchParams }: ArticlePageProps): Promise<Metadata> {
+export async function generateMetadata({ params }: ArticlePageProps): Promise<Metadata> {
   const { slug } = await params;
-  const sp = searchParams ? await searchParams : undefined;
-  const lang = getLangFromRequest(new URLSearchParams(sp ? { lang: sp.lang || "" } : ""));
-  const locale = LOCALE_MAP[lang];
-  const article = await getArticleBySlug(slug, locale);
-
-  if (!article) return {};
-
-  const alternates = getAlternateUrls(slug);
-
+  const a = articleParSlug(slug);
+  if (!a) return {};
   return {
-    title: article.title,
-    description: article.excerpt,
-    openGraph: {
-      title: article.title,
-      description: article.excerpt,
-      url: `/article/${article.slug}?lang=${lang}`,
-      type: "article",
-      publishedTime: article.date,
-      images: article.thumbnail
-        ? [{ url: article.thumbnail, width: 1200, height: 630, alt: article.title }]
-        : [],
-    },
-    twitter: {
-      card: "summary_large_image",
-    },
-    alternates: {
-      languages: {
-        "x-default": `https://wwworkflows.com/article/${slug}`,
-        fr: `https://wwworkflows.com/article/${slug}?lang=fr`,
-        en: `https://wwworkflows.com/article/${slug}?lang=en`,
-      },
-    },
+    title: a.title,
+    description: a.excerpt,
+    // Même texte que sur afterworkworkflow.com : l'original y reste la référence pour les moteurs de recherche
+    alternates: { canonical: a.source },
+    openGraph: { title: a.title, description: a.excerpt, url: `/article/${a.slug}`, type: "article", images: [{ url: a.image }] },
   };
 }
 
-export default async function ArticlePage({ params, searchParams }: ArticlePageProps) {
+export default async function ArticlePage({ params }: ArticlePageProps) {
   const { slug } = await params;
-  const sp = searchParams ? await searchParams : undefined;
-  const lang = getLangFromRequest(new URLSearchParams(sp ? { lang: sp.lang || "" } : ""));
-  const locale = LOCALE_MAP[lang];
-  const otherLang = lang === "fr" ? "en" : "fr";
-  const article = await getArticleBySlug(slug, locale);
+  const a = articleParSlug(slug);
+  if (!a) notFound();
 
-  if (!article) {
-    notFound();
-  }
-
-  const formattedDate = new Date(article.date).toLocaleDateString(lang === "fr" ? "fr-FR" : "en-US", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
+  const titres = titresDe(a.body);
+  const autres = listeArticles().filter((x) => x.slug !== a.slug).slice(0, 3);
 
   return (
-    <div className="min-h-screen">
-      <div className="max-w-[730px] mx-auto px-6 md:px-8">
-        {/* Back navigation */}
-        <div className="pt-8 flex items-center justify-between">
-          <Link
-            href="/articles"
-            className="text-neutral-400 text-xs tracking-[0.12em] uppercase hover:text-neutral-900 transition-colors duration-300"
-          >
-            &larr; {lang === "fr" ? "Retour aux articles" : "Back to articles"}
+    <>
+      <section className="border-b border-encre">
+        <div className="max-w-[1240px] mx-auto px-4 md:px-8 pt-10 pb-12 md:pt-14 md:pb-16">
+          <Link href="/articles" className="mono text-gris hover:text-bleu transition-colors duration-300">
+            &larr; Tous les articles
           </Link>
-
-          {/* Language toggle */}
-          <Link
-            href={`/article/${slug}?lang=${otherLang}`}
-            className="text-xs tracking-[0.12em] uppercase px-3 py-1.5 rounded-full border border-neutral-200 text-neutral-400 hover:border-neutral-600 hover:text-neutral-900 transition-all duration-300"
-          >
-            {otherLang === "fr" ? "FR" : "EN"}
-          </Link>
-        </div>
-
-        {/* Title section */}
-        <section className="pt-12 pb-8 md:pt-16 md:pb-12">
-          <div className="flex items-center gap-3 mb-4">
-            {article.category && (
-              <span className="text-xs tracking-[0.12em] uppercase text-neutral-400">
-                {article.category}
-              </span>
-            )}
-            <span className="text-xs tracking-[0.1em] text-neutral-300">
-              {formattedDate}
-            </span>
-            {article.lang && (
-              <span className="text-[10px] tracking-[0.15em] uppercase text-neutral-300 border border-neutral-200 rounded-full px-2 py-0.5">
-                {lang === "fr" ? "FR" : "EN"}
-              </span>
-            )}
+          <div className="mt-10 flex flex-wrap items-center gap-3">
+            <span className="mono px-2.5 py-1.5 bg-bleu text-white">{a.category}</span>
+            <span className="mono text-gris">Lecture · {a.minutes ?? minutesDeLecture(a.body)} min</span>
+            {a.date && <span className="mono text-gris">{dateLisible(a.date)}</span>}
           </div>
-          <h1 className="text-[2.5rem] md:text-[3.25rem] font-bold tracking-tight text-neutral-900 leading-[1.15]">
-            {article.title}
-          </h1>
-          <p className="mt-5 text-neutral-500 text-[1.125rem] md:text-[1.25rem] leading-relaxed">
-            {article.excerpt}
+          <h1 className="texte-net titre-large mt-6 text-4xl md:text-6xl leading-[1.04] max-w-4xl">{a.title}</h1>
+          <p className="mt-6 max-w-3xl text-lg md:text-xl leading-relaxed text-gris">{a.excerpt}</p>
+        </div>
+      </section>
+
+      <section className="max-w-[1240px] mx-auto px-4 md:px-8 pt-10 md:pt-14">
+        <div className="relative aspect-[16/9] overflow-hidden bg-trait">
+          <Image src={a.image} alt={a.imageAlt} fill className="object-cover" priority sizes="(max-width: 1240px) 100vw, 1176px" />
+        </div>
+      </section>
+
+      <section className="max-w-[1240px] mx-auto px-4 md:px-8 pt-12 md:pt-20">
+        <article id="texte-cas" className="corps-cas relative max-w-[940px] xl:ml-[262px]">
+          <OutilsLecture titres={titres} libelle="Dans cet article" />
+          <RichBody body={a.body} bodyMedia={[]} />
+          <p className="max-w-[680px] mt-10 pt-4 border-t border-trait mono text-gris">
+            Publié d&apos;abord sur{" "}
+            <a href={a.source} target="_blank" rel="noopener noreferrer" className="text-bleu hover:text-encre">
+              Afterwork Workflow ↗
+            </a>
           </p>
+        </article>
+      </section>
+
+      {autres.length > 0 && (
+        <section className="max-w-[1240px] mx-auto px-4 md:px-8 pt-20 md:pt-28">
+          <div className="flex items-baseline justify-between border-b border-encre pb-4 mb-8">
+            <h2 className="mono text-encre">À lire aussi</h2>
+            <Link href="/articles" className="mono text-gris hover:text-bleu transition-colors duration-300">
+              Tous les articles →
+            </Link>
+          </div>
+          <div className="grid md:grid-cols-3 gap-8">
+            {autres.map((x) => (
+              <Link key={x.slug} href={`/article/${x.slug}`} className="group block border-t border-trait pt-4">
+                <span className="mono text-bleu">{x.category}</span>
+                <h3 className="titre-large mt-3 text-xl leading-snug transition-colors duration-300 group-hover:text-bleu">{x.title}</h3>
+              </Link>
+            ))}
+          </div>
         </section>
-
-        {/* Thin separator */}
-        <div className="border-t border-black/10 mb-10" />
-
-        {/* Hero image */}
-        {article.thumbnail && (
-          <section className="mb-10">
-            <div className="relative aspect-[16/9] overflow-hidden bg-neutral-100">
-              <Image
-                src={article.thumbnail}
-                alt={article.title}
-                fill
-                className="object-cover"
-                priority
-                sizes="(max-width: 730px) 100vw, 730px"
-              />
-            </div>
-          </section>
-        )}
-
-        {/* Body content */}
-        <section className="mb-16">
-          <RichBody body={article.body} bodyMedia={[]} />
-        </section>
-
-        {/* Back to articles */}
-        <section className="border-t border-black/10 py-12 text-center">
-          <Link
-            href="/articles"
-            className="text-neutral-400 text-xs tracking-[0.12em] uppercase hover:text-neutral-900 transition-colors duration-300"
-          >
-            {lang === "fr" ? "Voir tous les articles" : "See all articles"} &rarr;
-          </Link>
-        </section>
-      </div>
-    </div>
+      )}
+    </>
   );
 }

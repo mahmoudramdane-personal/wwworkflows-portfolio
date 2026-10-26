@@ -1,52 +1,52 @@
-import { getProjects } from "@/lib/contentful";
-import CarteCas from "@/components/CarteCas";
-import Apparition from "@/components/Apparition";
+import Link from "next/link";
+import { getProjects, getAboutPage } from "@/lib/contentful";
+import SectionCas from "@/components/SectionCas";
+import SectionReferences from "@/components/SectionReferences";
+import SectionServices from "@/components/SectionServices";
+import GrainDegrade from "@/components/GrainDegrade";
 
 export const revalidate = 60;
 
 export default async function Home() {
-  const projects = await getProjects();
+  // Page d'accueil = landing page : accroche, références, cas d'études, services, puis le contact (footer)
+  const [projects, about] = await Promise.all([getProjects(), getAboutPage()]);
 
   return (
     <>
-      {/* En-tête : qui nous sommes, en une phrase */}
-      <section className="fond-grille border-b border-encre">
-        <div className="max-w-[1240px] mx-auto px-4 md:px-8 pt-20 pb-20 md:pt-32 md:pb-28">
-          <span className="mono text-gris">WWWORKFLOWS · Design computationnel et IA</span>
-          <h1 className="titre-large mt-6 text-[2.6rem] leading-[1.02] md:text-7xl lg:text-[5.4rem] max-w-5xl">
-            Un partenaire créatif pour les architectes et designers.
-          </h1>
-          <p className="mt-8 md:mt-10 max-w-3xl text-lg md:text-2xl leading-relaxed text-gris">
-            Nous développons des workflows algorithmiques, en utilisant le{" "}
-            <span className="text-encre font-semibold border-b-2 border-bleu">design computationnel</span> et l&apos;
-            <span className="text-encre font-semibold border-b-2 border-bleu">intelligence artificielle</span>, qui
-            aident à imaginer, modéliser et produire.
-          </p>
-          <div className="mt-10 flex flex-wrap gap-3">
-            <a href="#cas-etudes" className="mono inline-flex items-center px-4 py-3 bg-bleu text-white border border-bleu hover:bg-encre hover:border-encre transition-colors duration-300">
-              Voir les cas d&apos;études ↓
-            </a>
-            <a href="/contact" className="mono inline-flex items-center px-4 py-3 border border-encre bg-blanc hover:bg-encre hover:text-papier transition-colors duration-300">
-              Parler d&apos;un projet
-            </a>
+      {/* En-tête : façade de lames en fond, pâle et effacée côté texte ; le texte reste devant */}
+      <section className="relative overflow-hidden">
+        <GrainDegrade mode="entete" className="absolute inset-0" />
+        <div className="grain-aplat absolute inset-0 pointer-events-none" aria-hidden="true" />
+        <div className="relative max-w-[1240px] mx-auto px-4 md:px-8 pt-20 lg:pt-32 lg:pb-32 grid lg:grid-cols-12 pb-72 md:pb-20">
+          <div className="lg:col-span-7">
+            <span className="mono text-gris">WWWORKFLOWS · Design computationnel et IA</span>
+            <h1 className="texte-net titre-large mt-6 text-[2.6rem] leading-[1.04] md:text-6xl lg:text-[4.1rem]">
+              Un partenaire créatif pour les architectes et designers.
+            </h1>
+            <p className="mt-8 text-lg md:text-xl leading-relaxed text-gris">
+              Nous développons des workflows algorithmiques, en utilisant le{" "}
+              <Link href="/article/architecte-et-technologiste" className="lien-notion">design computationnel</Link> et l&apos;
+              <Link href="/article/ia-architecture-assistant-architecte" className="lien-notion">intelligence artificielle</Link>, qui
+              aident à imaginer, modéliser et produire.
+            </p>
+            <div className="mt-10 flex flex-wrap gap-3">
+              <a href="#cas-etudes" className="mono inline-flex items-center px-4 py-3 bg-bleu text-white border border-bleu hover:bg-encre hover:border-encre transition-colors duration-300">
+                Voir les cas d&apos;études ↓
+              </a>
+              <a href="#contact" className="mono inline-flex items-center px-4 py-3 border border-encre bg-blanc hover:bg-encre hover:text-papier transition-colors duration-300">
+                Parler d&apos;un projet
+              </a>
+            </div>
           </div>
+
         </div>
       </section>
 
-      {/* Cas d'études : une carte par cas */}
-      <section id="cas-etudes" className="max-w-[1240px] mx-auto px-4 md:px-8 pt-20 md:pt-28">
-        <div className="flex items-baseline justify-between border-b border-encre pb-4 mb-10 md:mb-14">
-          <h2 className="mono text-encre">Cas d&apos;études</h2>
-          <span className="mono text-gris">{String(projects.length).padStart(2, "0")}</span>
-        </div>
-        <div className="grid gap-10 md:gap-16">
-          {projects.map((p, i) => (
-            <Apparition key={p.slug}>
-              <CarteCas project={p} numero={i + 1} />
-            </Apparition>
-          ))}
-        </div>
-      </section>
+      <SectionReferences />
+
+      <SectionCas projects={projects} />
+
+      <SectionServices services={about.services} />
     </>
   );
 }

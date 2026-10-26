@@ -2,6 +2,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { Project, CATEGORY_LABELS, Category } from "@/lib/types";
 
+const LAMES = 14;
+
 // Carte d'un cas d'études sur l'accueil : grande image, numéro, titre, sous-titre, fiche.
 export default function CarteCas({ project, numero }: { project: Project; numero: number }) {
   const image = project.thumbnail || project.heroImage;
@@ -12,15 +14,30 @@ export default function CarteCas({ project, numero }: { project: Project; numero
       href={`/project/${project.slug}`}
       className="group grid md:grid-cols-12 bg-blanc border border-encre transition-shadow duration-500 hover:shadow-[8px_8px_0_0_var(--bleu)]"
     >
-      <div className="relative md:col-span-7 aspect-[3/2] md:aspect-auto md:min-h-[420px] overflow-hidden border-b md:border-b-0 md:border-r border-encre bg-trait">
+      <div className="volet relative md:col-span-7 aspect-[3/2] md:aspect-auto md:min-h-[420px] overflow-hidden border-b md:border-b-0 md:border-r border-encre bg-trait">
         {image && (
-          <Image
-            src={image}
-            alt={project.title}
-            fill
-            className="object-cover transition-transform duration-[1200ms] ease-out group-hover:scale-[1.04]"
-            sizes="(max-width: 768px) 100vw, 720px"
-          />
+          <>
+            {/* Couleur d'origine dessous */}
+            <Image src={image} alt={project.title} fill className="object-cover" sizes="(max-width: 768px) 100vw, 720px" />
+            {/* Duotone bleu tramé dessus, en lames verticales qui se replient au survol */}
+            <div className="absolute inset-0 [container-type:inline-size]" aria-hidden="true">
+              {Array.from({ length: LAMES }).map((_, i) => (
+                <div
+                  key={i}
+                  className="lame-duo absolute inset-y-0 overflow-hidden"
+                  style={{
+                    left: `calc(${i} * 100cqw / ${LAMES})`,
+                    width: `calc(100cqw / ${LAMES} + 1px)`,
+                    transitionDelay: `${i * 30}ms`,
+                  }}
+                >
+                  <div className="duotone absolute inset-y-0 w-[100cqw]" style={{ left: `calc(${-i} * 100cqw / ${LAMES})` }}>
+                    <Image src={image} alt="" fill className="object-cover" sizes="(max-width: 768px) 100vw, 720px" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </>
         )}
       </div>
 

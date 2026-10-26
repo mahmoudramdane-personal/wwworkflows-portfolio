@@ -72,7 +72,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
             </span>
             <span className="mono text-gris">Lecture · {minutesDeLecture(project.body)} min</span>
           </div>
-          <h1 className="titre-large mt-6 text-4xl md:text-6xl lg:text-[4.6rem] leading-[1.02] max-w-5xl">{project.title}</h1>
+          <h1 className="texte-net titre-large mt-6 text-4xl md:text-6xl lg:text-[4.6rem] leading-[1.02] max-w-5xl">{project.title}</h1>
           <p className="mt-6 max-w-3xl text-lg md:text-xl leading-relaxed text-gris">{project.subtitle}</p>
 
           <dl className="mt-10 grid grid-cols-2 md:grid-cols-4 border-t border-encre">
@@ -87,15 +87,15 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
       {/* Image principale */}
       {project.heroImage && (
         <section className="max-w-[1240px] mx-auto px-4 md:px-8 pt-10 md:pt-14">
-          <div className="relative aspect-[16/9] overflow-hidden border border-encre bg-trait">
+          <div className="relative aspect-[16/9] overflow-hidden bg-trait">
             <Image src={project.heroImage} alt={project.title} fill className="object-cover" priority sizes="(max-width: 1240px) 100vw, 1176px" />
           </div>
         </section>
       )}
 
-      {/* Texte : feuille blanche au centre, sommaire à gauche sur grand écran */}
-      <section className="px-4 md:px-8 pt-10 md:pt-14">
-        <article id="texte-cas" className="relative mx-auto max-w-[820px] bg-blanc border border-encre px-5 py-10 md:px-14 md:py-16">
+      {/* Texte sur le papier, colonne de lecture étroite ; images plus larges ; sommaire collant à gauche */}
+      <section className="max-w-[1240px] mx-auto px-4 md:px-8 pt-12 md:pt-20">
+        <article id="texte-cas" className="corps-cas relative max-w-[940px] xl:ml-[262px]">
           <OutilsLecture titres={titres} />
           <RichBody body={project.body} bodyMedia={project.bodyMedia} />
 
@@ -103,7 +103,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
             <div className="mt-10 grid gap-6">
               {project.images.map((src, i) => (
                 <div key={i} className="relative aspect-[16/9] overflow-hidden bg-trait">
-                  <Image src={src} alt={`${project.title} — ${i + 1}`} fill className="object-cover" sizes="(max-width: 820px) 100vw, 708px" />
+                  <Image src={src} alt={`${project.title} — ${i + 1}`} fill className="object-cover" sizes="(max-width: 940px) 100vw, 940px" />
                 </div>
               ))}
             </div>

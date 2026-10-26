@@ -10,6 +10,10 @@ const client =
       })
     : null;
 
+// La marque s'écrit WWWORKFLOWS en majuscules sur le site, quel que soit le texte saisi dans Contentful
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const marque = (t: any): string => (typeof t === "string" ? t.replace(/WWWorkflows/g, "WWWORKFLOWS") : t);
+
 export async function getProjects(): Promise<Project[]> {
   if (!client) {
     const { mockProjects } = await import("@/data/projects");
@@ -29,9 +33,9 @@ export async function getProjects(): Promise<Project[]> {
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return entries.items.map((item: any) => ({
-      title: item.fields.title,
+      title: marque(item.fields.title),
       slug: item.fields.slug,
-      subtitle: item.fields.subtitle,
+      subtitle: marque(item.fields.subtitle),
       client: item.fields.client,
       year: item.fields.year,
       location: item.fields.location,
@@ -82,9 +86,9 @@ export async function getProjectBySlug(
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const item = entries.items[0] as any;
     return {
-      title: item.fields.title,
+      title: marque(item.fields.title),
       slug: item.fields.slug,
-      subtitle: item.fields.subtitle,
+      subtitle: marque(item.fields.subtitle),
       client: item.fields.client,
       year: item.fields.year,
       location: item.fields.location,
@@ -146,7 +150,7 @@ export async function getArticles(
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return entries.items.map((item: any) => ({
-      title: item.fields.title,
+      title: marque(item.fields.title),
       slug: item.fields.slug,
       excerpt: item.fields.excerpt,
       body: item.fields.body,
@@ -182,7 +186,7 @@ export async function getArticleBySlug(slug: string, locale?: Locale): Promise<A
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const item = entries.items[0] as any;
     return {
-      title: item.fields.title,
+      title: marque(item.fields.title),
       slug: item.fields.slug,
       excerpt: item.fields.excerpt,
       body: item.fields.body,

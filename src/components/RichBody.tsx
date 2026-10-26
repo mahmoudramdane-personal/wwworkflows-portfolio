@@ -33,7 +33,7 @@ export default function RichBody({ body, bodyMedia }: RichBodyProps) {
   const segments = splitMediaSegments(body);
 
   return (
-    <div className="space-y-6">
+    <div>
       {segments.map((segment, i) => {
         if (segment.type === "media") return renderMedia(segment.value, bodyMedia, i);
         if (segment.type === "youtube") return renderYouTube(segment.value, i);
@@ -42,7 +42,7 @@ export default function RichBody({ body, bodyMedia }: RichBodyProps) {
 
         // Markdown content
         return (
-          <div key={i} className="prose-custom">
+          <div key={i} className="max-w-[680px]">
             <ReactMarkdown
               remarkPlugins={[remarkGfm]}
               components={{
@@ -125,8 +125,8 @@ export default function RichBody({ body, bodyMedia }: RichBodyProps) {
                 ),
                 // eslint-disable-next-line @next/next/no-img-element
                 img: ({ src, alt }) => (
-                  <figure className="my-4">
-                    <div className="relative overflow-hidden bg-trait">
+                  <figure className="figure-cas">
+                    <div className="relative overflow-hidden">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
                         src={src}
@@ -214,8 +214,8 @@ function renderMedia(filename: string, bodyMedia: MediaAsset[], key: number) {
     asset.contentType === "image/gif" || filename.endsWith(".gif");
 
   return (
-    <figure key={key} className="my-4">
-      <div className="relative overflow-hidden bg-trait">
+    <figure key={key} className="figure-cas">
+      <div className="relative overflow-hidden">
         {isGif ? (
           <AnimatedMedia src={asset.url} alt={filename} />
         ) : (
@@ -225,7 +225,7 @@ function renderMedia(filename: string, bodyMedia: MediaAsset[], key: number) {
             width={asset.width || 1600}
             height={asset.height || 900}
             className="w-full h-auto"
-            sizes="(max-width: 820px) calc(100vw - 72px), 708px"
+            sizes="(max-width: 940px) calc(100vw - 32px), 940px"
           />
         )}
       </div>
@@ -235,7 +235,7 @@ function renderMedia(filename: string, bodyMedia: MediaAsset[], key: number) {
 
 function renderYouTube(videoId: string, key: number) {
   return (
-    <figure key={key} className="my-4">
+    <figure key={key} className="figure-cas">
       <div className="relative aspect-video overflow-hidden bg-trait">
         <iframe
           src={`https://www.youtube-nocookie.com/embed/${videoId}`}
@@ -255,7 +255,7 @@ function renderMiro(value: string, key: number) {
   const src = `https://miro.com/app/live-embed/${boardId}/?embedMode=view_only_without_ui${params ? `&${params}` : ""}`;
 
   return (
-    <figure key={key} className="my-4">
+    <figure key={key} className="figure-cas">
       <div className="relative aspect-video overflow-hidden bg-trait">
         <iframe
           src={src}
@@ -278,8 +278,8 @@ function renderVideo(filename: string, bodyMedia: MediaAsset[], key: number) {
   if (!asset) return null;
 
   return (
-    <figure key={key} className="my-4">
-      <div className="relative overflow-hidden bg-trait">
+    <figure key={key} className="figure-cas">
+      <div className="relative overflow-hidden">
         <video
           src={asset.url}
           controls

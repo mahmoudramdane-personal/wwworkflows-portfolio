@@ -4,7 +4,13 @@ import { useEffect, useState } from "react";
 
 // Outils de lecture d'un cas d'études, repris d'afterworkworkflow.com :
 // barre de progression, sommaire collant (grand écran) ou dépliable (téléphone), retour en haut.
-export default function OutilsLecture({ titres }: { titres: { id: string; texte: string }[] }) {
+export default function OutilsLecture({
+  titres,
+  libelle = "Dans ce cas d'études",
+}: {
+  titres: { id: string; texte: string }[];
+  libelle?: string;
+}) {
   const [progres, setProgres] = useState(0);
   const [ici, setIci] = useState(-1);
   const [haut, setHaut] = useState(false);
@@ -63,7 +69,7 @@ export default function OutilsLecture({ titres }: { titres: { id: string; texte:
         <>
           <nav className="hidden xl:block absolute top-0 bottom-0 right-[calc(100%+32px)] w-[210px]" aria-label="Sommaire">
             <div className="sticky top-[104px] grid gap-4">
-              <span className="mono text-gris">Dans ce cas d&apos;études</span>
+              <span className="mono text-gris">{libelle}</span>
               {liste()}
             </div>
           </nav>
