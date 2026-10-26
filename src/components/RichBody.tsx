@@ -6,6 +6,7 @@ import AnimatedMedia from "./AnimatedMedia";
 import Eclate from "./Eclate";
 import Construction from "./Construction";
 import Familles from "./Familles";
+import Vues from "./Vues";
 import LamesH2A from "./LamesH2A";
 import { idTitre } from "@/lib/titres";
 
@@ -46,6 +47,7 @@ export default function RichBody({ body, bodyMedia }: RichBodyProps) {
         if (segment.type === "eclate") return renderEclate(segment.value, bodyMedia, i);
         if (segment.type === "construction") return renderConstruction(segment.value, bodyMedia, i);
         if (segment.type === "familles") return renderFamilles(segment.value, bodyMedia, i);
+        if (segment.type === "vues") return renderVues(segment.value, bodyMedia, i);
         if (segment.type === "module") return renderModule(segment.value, i);
 
         // Markdown content
@@ -159,7 +161,7 @@ export default function RichBody({ body, bodyMedia }: RichBodyProps) {
 // --- Helpers ---
 
 interface Segment {
-  type: "markdown" | "media" | "youtube" | "video" | "miro" | "eclate" | "construction" | "familles" | "module";
+  type: "markdown" | "media" | "youtube" | "video" | "miro" | "eclate" | "construction" | "familles" | "vues" | "module";
   value: string;
 }
 
@@ -216,6 +218,13 @@ function splitMediaSegments(body: string): Segment[] {
     if (constructionMatch) {
       flushMd();
       segments.push({ type: "construction", value: constructionMatch[1] });
+      continue;
+    }
+
+    const vuesMatch = trimmed.match(/^\{\{vues:(.+?)\}\}$/);
+    if (vuesMatch) {
+      flushMd();
+      segments.push({ type: "vues", value: vuesMatch[1] });
       continue;
     }
 
@@ -381,6 +390,27 @@ function renderFamilles(value: string, bodyMedia: MediaAsset[], key: number) {
       tout={tout.url}
       largeur={tout.width || 1200}
       hauteur={tout.height || 1200}
+    />
+  );
+}
+
+// {{vues:nom|so:Sud-ouest|plan:Plan|…}} : images nom-so.webp, nom-plan.webp… dans bodyMedia ; le cadre prend la plus grande taille
+function renderVues(value: string, bodyMedia: MediaAsset[], key: number) {
+  const [nom, ...brut] = value.split("|").map((t) => t.trim());
+  const vues = brut
+    .map((t) => {
+      const [code, libelle] = t.split(":").map((x) => x.trim());
+      const m = bodyMedia.find((x) => new RegExp(`^${nom}-${code}\\.(png|webp|jpe?g)$`, "i").test(x.filename));
+      return m ? { nom: libelle || code.toUpperCase(), image: m.url, w: m.width || 1600, h: m.height || 1000 } : null;
+    })
+    .filter((v): v is { nom: string; image: string; w: number; h: number } => !!v);
+  if (!vues.length) return null;
+  return (
+    <Vues
+      key={key}
+      vues={vues}
+      largeur={vues[0].w}
+      hauteur={Math.max(...vues.map((v) => (v.h * vues[0].w) / v.w))}
     />
   );
 }

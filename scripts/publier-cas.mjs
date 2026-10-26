@@ -52,7 +52,10 @@ for (const f of fichiers) {
   const nom = path.basename(f);
   const ext = path.extname(nom).toLowerCase();
   let nouveau = nom;
-  if ([".png", ".jpg", ".jpeg", ".gif", ".webp"].includes(ext)) {
+  if (ext === ".webp") {
+    // Déjà en WebP (souvent repris d'un cas publié, parfois animé) : copié tel quel, pas de seconde compression
+    fs.copyFileSync(f, path.join(tmp, nouveau));
+  } else if ([".png", ".jpg", ".jpeg", ".gif", ".webp"].includes(ext)) {
     nouveau = nom.replace(/\.[^.]+$/, ".webp");
     const largeur = une.has(nom) ? MAX_UNE_PX : MAX_CORPS_PX;
     await sharp(f, { animated: ext === ".gif", limitInputPixels: false })

@@ -9,7 +9,7 @@ location: 'Fez, Maroc'
 category: facade-design
 status: Étude de faisabilité
 collaborators: Orange Atelier
-order: 1
+order: 4
 thumbnail: 21-colored-zellige-ceramic-variant-01.webp
 heroImage: 22-colored-zellige-ceramic-variant-02.webp
 ---
