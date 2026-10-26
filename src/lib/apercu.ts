@@ -49,8 +49,9 @@ export function lireApercu(slug: string): Project | null {
   };
   // Même conversion que scripts/publish.mjs : ![[x.png]], ![[x.png|500]], ![](./attachments/x.png)
   body = body
-    .replace(/^\s*!\[\[([^\]]+)\]\]\s*$/gm, (_, f) => media(f))
-    .replace(/^\s*!\[[^\]]*\]\(([^)\s]+)\)\s*$/gm, (m, f) => (/^https?:/.test(f) ? m : media(decodeURIComponent(f))));
+    // [ \t]* et non \s* : en mode /m, \s avalerait les sauts de ligne et collerait deux images à la suite
+    .replace(/^[ \t]*!\[\[([^\]]+)\]\][ \t]*$/gm, (_, f) => media(f))
+    .replace(/^[ \t]*!\[[^\]]*\]\(([^)\s]+)\)[ \t]*$/gm, (m, f) => (/^https?:/.test(f) ? m : media(decodeURIComponent(f))));
 
   // Toutes les images du dossier sont aussi disponibles pour les embeds qui les cherchent par nom ({{eclate:…}})
   for (const sous of ["", "attachments"]) {
