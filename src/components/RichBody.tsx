@@ -4,6 +4,7 @@ import remarkGfm from "remark-gfm";
 import { MediaAsset } from "@/lib/types";
 import AnimatedMedia from "./AnimatedMedia";
 import Eclate from "./Eclate";
+import Construction from "./Construction";
 import { idTitre } from "@/lib/titres";
 
 // Texte brut d'un enfant React (pour l'ancre d'un intertitre)
@@ -41,6 +42,7 @@ export default function RichBody({ body, bodyMedia }: RichBodyProps) {
         if (segment.type === "video") return renderVideo(segment.value, bodyMedia, i);
         if (segment.type === "miro") return renderMiro(segment.value, i);
         if (segment.type === "eclate") return renderEclate(segment.value, bodyMedia, i);
+        if (segment.type === "construction") return renderConstruction(segment.value, bodyMedia, i);
 
         // Markdown content
         return (
@@ -153,7 +155,7 @@ export default function RichBody({ body, bodyMedia }: RichBodyProps) {
 // --- Helpers ---
 
 interface Segment {
-  type: "markdown" | "media" | "youtube" | "video" | "miro" | "eclate";
+  type: "markdown" | "media" | "youtube" | "video" | "miro" | "eclate" | "construction";
   value: string;
 }
 
@@ -196,6 +198,13 @@ function splitMediaSegments(body: string): Segment[] {
     if (miroMatch) {
       flushMd();
       segments.push({ type: "miro", value: miroMatch[1] });
+      continue;
+    }
+
+    const constructionMatch = trimmed.match(/^\{\{construction:(.+?)\}\}$/);
+    if (constructionMatch) {
+      flushMd();
+      segments.push({ type: "construction", value: constructionMatch[1] });
       continue;
     }
 
@@ -277,6 +286,47 @@ function renderEclate(value: string, bodyMedia: MediaAsset[], key: number) {
   });
   const { width = 1560, height = 940 } = calques[0].m;
   return <Eclate key={key} couches={couches} largeur={width} hauteur={height} />;
+}
+
+// {{construction:nom|Libellé#couleur:Phrase|…}} : images nom-<vue>-01.webp … dans bodyMedia, une série par angle
+const ORDRE_VUES = ["so", "ne", "se", "no"];
+function renderConstruction(value: string, bodyMedia: MediaAsset[], key: number) {
+  const [nom, ...brut] = value.split("|").map((t) => t.trim());
+  const etapes = brut.map((t) => {
+    const deuxPoints = t.indexOf(":");
+    const tete = deuxPoints < 0 ? t : t.slice(0, deuxPoints);
+    const [libelle, couleur] = tete.split("#");
+    return {
+      libelle: libelle.trim(),
+      couleur: couleur ? `#${couleur.trim()}` : undefined,
+      phrase: deuxPoints < 0 ? undefined : t.slice(deuxPoints + 1).trim(),
+    };
+  });
+  const prefixe = `${nom.toLowerCase()}-`;
+  const parVue = new Map<string, { rang: number; m: MediaAsset }[]>();
+  for (const m of bodyMedia) {
+    const f = m.filename.toLowerCase();
+    if (!f.startsWith(prefixe)) continue;
+    const r = f.slice(prefixe.length).match(/^([a-z]+)-(\d+)\.(png|webp)$/);
+    if (!r) continue;
+    if (!parVue.has(r[1])) parVue.set(r[1], []);
+    parVue.get(r[1])!.push({ rang: Number(r[2]), m });
+  }
+  const rangVue = (v: string) => (ORDRE_VUES.includes(v) ? ORDRE_VUES.indexOf(v) : 99);
+  const vues = [...parVue.entries()]
+    .sort((a, b) => rangVue(a[0]) - rangVue(b[0]) || a[0].localeCompare(b[0]))
+    .map(([v, liste]) => {
+      liste.sort((a, b) => a.rang - b.rang);
+      return {
+        nom: v,
+        images: liste.map((x) => x.m.url),
+        largeur: liste[0].m.width || 1200,
+        hauteur: liste[0].m.height || 1200,
+      };
+    })
+    .filter((v) => v.images.length === etapes.length);
+  if (!vues.length || !etapes.length) return null;
+  return <Construction key={key} etapes={etapes} vues={vues} />;
 }
 
 function renderMiro(value: string, key: number) {

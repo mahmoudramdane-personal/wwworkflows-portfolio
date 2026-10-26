@@ -229,3 +229,11 @@ main { overflow-x: clip; }
 @media (prefers-reduced-motion: reduce) {
   .eclate-pile, .eclate-couche { transition: none; }
 }
+
+/* Curseur de construction (Construction.tsx) : piste fine encre, poignée carrée bleue, au doigt sur téléphone */
+.curseur-construction { -webkit-appearance: none; appearance: none; height: 28px; background: transparent; cursor: pointer; touch-action: pan-y; }
+.curseur-construction::-webkit-slider-runnable-track { height: 2px; background: var(--encre); }
+.curseur-construction::-moz-range-track { height: 2px; background: var(--encre); }
+.curseur-construction::-webkit-slider-thumb { -webkit-appearance: none; width: 22px; height: 22px; margin-top: -10px; background: var(--bleu); border: 0; border-radius: 0; }
+.curseur-construction::-moz-range-thumb { width: 22px; height: 22px; background: var(--bleu); border: 0; border-radius: 0; }
+.curseur-construction:focus-visible { outline: 2px solid var(--bleu); outline-offset: 4px; }

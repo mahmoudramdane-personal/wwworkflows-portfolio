@@ -210,7 +210,7 @@ function collectMediaRefs(body, fm, attachmentsDir) {
   }
 
   // Body: éclaté  {{eclate:nom|légendes}}  → toutes les couches nom-1.png … nom-N.png de attachments/
-  for (const m of body.matchAll(/\{\{eclate:([^|}]+)/g)) {
+  for (const m of body.matchAll(/\{\{(?:eclate|construction):([^|}]+)/g)) {
     for (const f of coucheseclate(m[1].trim(), attachmentsDir)) add(f);
   }
 
@@ -220,13 +220,13 @@ function collectMediaRefs(body, fm, attachmentsDir) {
   );
 }
 
-// Couches d'un éclaté : nom-1.png, nom-2.png… (même convention que RichBody)
+// Couches d'un éclaté (nom-1.png…) ou images d'un curseur de construction (nom-so-01.webp…), même convention que RichBody
 function coucheseclate(nom, dossier) {
   if (!fs.existsSync(dossier)) return [];
   const prefixe = `${nom.toLowerCase()}-`;
   return fs.readdirSync(dossier).filter((f) => {
     if (!f.toLowerCase().startsWith(prefixe)) return false;
-    return /^\d+\.(png|webp)$/i.test(f.slice(prefixe.length));
+    return /^([a-z]+-)?\d+\.(png|webp)$/i.test(f.slice(prefixe.length));
   });
 }
 
@@ -498,10 +498,10 @@ function getBodyMediaLinks(body, assets) {
     if (assets[filename]) ids.add(assets[filename].id);
   }
   // Couches des éclatés : RichBody les retrouve dans bodyMedia par leur nom
-  for (const m of body.matchAll(/\{\{eclate:([^|}]+)/g)) {
+  for (const m of body.matchAll(/\{\{(?:eclate|construction):([^|}]+)/g)) {
     const prefixe = `${m[1].trim().toLowerCase()}-`;
     for (const [filename, a] of Object.entries(assets)) {
-      if (filename.toLowerCase().startsWith(prefixe) && /^\d+\.(png|webp)$/i.test(filename.slice(prefixe.length))) ids.add(a.id);
+      if (filename.toLowerCase().startsWith(prefixe) && /^([a-z]+-)?\d+\.(png|webp)$/i.test(filename.slice(prefixe.length))) ids.add(a.id);
     }
   }
   return [...ids].map((id) => ({ sys: { type: "Link", linkType: "Asset", id } }));
