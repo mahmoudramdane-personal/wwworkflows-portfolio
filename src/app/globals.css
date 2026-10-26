@@ -222,3 +222,10 @@ main { overflow-x: clip; }
 .texte-net:hover::before {
   opacity: 1;
 }
+
+/* Éclaté des cas d'études (Eclate.tsx) : la pile se réduit pendant que les couches s'écartent */
+.eclate-pile { transition: transform 0.9s cubic-bezier(0.2, 0.8, 0.2, 1); }
+.eclate-couche { transition: transform 0.9s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.5s ease; }
+@media (prefers-reduced-motion: reduce) {
+  .eclate-pile, .eclate-couche { transition: none; }
+}

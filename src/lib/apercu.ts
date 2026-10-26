@@ -52,6 +52,23 @@ export function lireApercu(slug: string): Project | null {
     .replace(/^\s*!\[\[([^\]]+)\]\]\s*$/gm, (_, f) => media(f))
     .replace(/^\s*!\[[^\]]*\]\(([^)\s]+)\)\s*$/gm, (m, f) => (/^https?:/.test(f) ? m : media(decodeURIComponent(f))));
 
+  // Toutes les images du dossier sont aussi disponibles pour les embeds qui les cherchent par nom ({{eclate:…}})
+  for (const sous of ["", "attachments"]) {
+    const d = path.join(dossier, sous);
+    if (!fs.existsSync(d)) continue;
+    for (const nom of fs.readdirSync(d)) {
+      if (!/\.(png|webp|jpe?g|gif)$/i.test(nom) || bodyMedia.some((m) => m.filename === nom)) continue;
+      const asset: MediaAsset = { url: url(nom)!, filename: nom, contentType: "image/*" };
+      // Taille lue dans l'en-tête PNG (l'éclaté garde le cadrage de ses calques)
+      const tete = fs.readFileSync(path.join(d, nom)).subarray(0, 24);
+      if (tete.toString("ascii", 1, 4) === "PNG") {
+        asset.width = tete.readUInt32BE(16);
+        asset.height = tete.readUInt32BE(20);
+      }
+      bodyMedia.push(asset);
+    }
+  }
+
   const image = (champ: unknown) => (typeof champ === "string" ? url(champ) || undefined : undefined);
 
   return {

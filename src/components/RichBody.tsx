@@ -3,6 +3,7 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { MediaAsset } from "@/lib/types";
 import AnimatedMedia from "./AnimatedMedia";
+import Eclate from "./Eclate";
 import { idTitre } from "@/lib/titres";
 
 // Texte brut d'un enfant React (pour l'ancre d'un intertitre)
@@ -39,6 +40,7 @@ export default function RichBody({ body, bodyMedia }: RichBodyProps) {
         if (segment.type === "youtube") return renderYouTube(segment.value, i);
         if (segment.type === "video") return renderVideo(segment.value, bodyMedia, i);
         if (segment.type === "miro") return renderMiro(segment.value, i);
+        if (segment.type === "eclate") return renderEclate(segment.value, bodyMedia, i);
 
         // Markdown content
         return (
@@ -151,7 +153,7 @@ export default function RichBody({ body, bodyMedia }: RichBodyProps) {
 // --- Helpers ---
 
 interface Segment {
-  type: "markdown" | "media" | "youtube" | "video" | "miro";
+  type: "markdown" | "media" | "youtube" | "video" | "miro" | "eclate";
   value: string;
 }
 
@@ -194,6 +196,13 @@ function splitMediaSegments(body: string): Segment[] {
     if (miroMatch) {
       flushMd();
       segments.push({ type: "miro", value: miroMatch[1] });
+      continue;
+    }
+
+    const eclateMatch = trimmed.match(/^\{\{eclate:(.+?)\}\}$/);
+    if (eclateMatch) {
+      flushMd();
+      segments.push({ type: "eclate", value: eclateMatch[1] });
       continue;
     }
 
@@ -247,6 +256,27 @@ function renderYouTube(videoId: string, key: number) {
       </div>
     </figure>
   );
+}
+
+// {{eclate:nom|Légende#couleur|…}} : couches nom-1.png (bas) … nom-N.png (haut) prises dans bodyMedia
+function renderEclate(value: string, bodyMedia: MediaAsset[], key: number) {
+  const [nom, ...legendes] = value.split("|").map((t) => t.trim());
+  const rangDe = (f: string) => {
+    if (!f.toLowerCase().startsWith(`${nom.toLowerCase()}-`)) return 0;
+    const r = f.slice(nom.length + 1).match(/^(\d+)\.(png|webp)$/i);
+    return r ? Number(r[1]) : 0;
+  };
+  const calques = bodyMedia
+    .map((m) => ({ m, rang: rangDe(m.filename) }))
+    .filter((c) => c.rang > 0)
+    .sort((a, b) => a.rang - b.rang);
+  if (!calques.length) return null;
+  const couches = calques.map(({ m }, i) => {
+    const [legende, couleur] = (legendes[i] || "").split("#");
+    return { url: m.url, legende: legende?.trim() || undefined, couleur: couleur ? `#${couleur.trim()}` : undefined };
+  });
+  const { width = 1560, height = 940 } = calques[0].m;
+  return <Eclate key={key} couches={couches} largeur={width} hauteur={height} />;
 }
 
 function renderMiro(value: string, key: number) {
