@@ -67,6 +67,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
 
   return (
     <>
+      <span className="sans-grain-mobile hidden" aria-hidden="true" />
       {/* En-tête du cas d'études */}
       <section className="fond-grille border-b border-encre">
         <div className="max-w-[1240px] mx-auto px-4 md:px-8 pt-10 pb-12 md:pt-14 md:pb-16">

@@ -192,6 +192,13 @@ body {
   background-size: 256px 256px;
 }
 
+/* Cas d'études sur téléphone : lecture sans grain (Mahmoud, 26.10.26) ; repère .sans-grain-mobile posé par la page */
+@media (max-width: 767px) {
+  body:has(.sans-grain-mobile) { background-image: none; }
+  body:has(.sans-grain-mobile) .grain-aplat { display: none; }
+  body:has(.sans-grain-mobile) .texte-net::before { display: none; }
+}
+
 /* Rien ne dépasse sur les côtés (halos des titres, volets) : pas de défilement horizontal sur téléphone */
 main { overflow-x: clip; }
 
