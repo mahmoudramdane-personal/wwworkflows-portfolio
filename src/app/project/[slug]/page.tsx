@@ -5,6 +5,7 @@ import Link from "next/link";
 import { CATEGORY_LABELS, Category } from "@/lib/types";
 import RichBody from "@/components/RichBody";
 import OutilsLecture from "@/components/OutilsLecture";
+import ChapeauCas, { extraireChapeau } from "@/components/ChapeauCas";
 import CarteCas from "@/components/CarteCas";
 import { titresDe, minutesDeLecture } from "@/lib/titres";
 import type { Metadata } from "next";
@@ -61,6 +62,10 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
   if (SANS_MIRO.includes(project.slug)) project.body = sansMiro(project.body);
 
   const titres = titresDe(project.body);
+  // Un embed placé tout en haut du texte (curseur, éclaté…) passe avant la fiche « En bref »
+  const corps = project.body.replace(/\r\n?/g, "\n");
+  const tete = corps.match(/^(?:\s*\{\{[^\n]+\}\}[ \t]*\n)+/)?.[0] ?? "";
+  const { chapeau, reste } = extraireChapeau(corps.slice(tete.length));
   const categorie = CATEGORY_LABELS[project.category as Category] || project.category;
   const rang = projects.findIndex((p) => p.slug === project.slug);
   const suivant = projects.length > 1 ? projects[(rang + 1) % projects.length] : null;
@@ -105,7 +110,9 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
       <section className="max-w-[1240px] mx-auto px-4 md:px-8 pt-12 md:pt-20">
         <article id="texte-cas" className="corps-cas relative max-w-[940px] xl:ml-[262px]">
           <OutilsLecture titres={titres} />
-          <RichBody body={project.body} bodyMedia={project.bodyMedia} />
+          {tete && <RichBody body={tete} bodyMedia={project.bodyMedia} />}
+          {chapeau && <ChapeauCas chapeau={chapeau} />}
+          <RichBody body={reste} bodyMedia={project.bodyMedia} />
 
           {project.images.length > 0 && (
             <div className="mt-10 grid gap-6">

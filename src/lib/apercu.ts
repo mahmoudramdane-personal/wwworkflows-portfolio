@@ -11,7 +11,8 @@ const RACINE = path.join(process.cwd(), "public", "apercu");
 
 // Mode insertion : frontmatter « insererApres: "<ligne exacte du corps Contentful>" ».
 // La page garde alors tout son contenu Contentful, et le corps de note.md est inséré après cette ligne.
-export type Apercu = Project & { insererApres?: string };
+// Et « remplacer: [{ de: "texte en ligne", par: "texte corrigé" }] » pour corriger une phrase du corps Contentful.
+export type Apercu = Project & { insererApres?: string; remplacer?: { de: string; par: string }[] };
 
 export function lireApercu(slug: string): Apercu | null {
   if (process.env.NODE_ENV === "production") return null;
@@ -92,12 +93,18 @@ export function lireApercu(slug: string): Apercu | null {
     images: [],
     bodyMedia,
     insererApres: typeof data.insererApres === "string" ? data.insererApres.trim() : undefined,
+    remplacer: Array.isArray(data.remplacer) ? data.remplacer : undefined,
   };
 }
 
 // Vraie page + bloc de l'aperçu inséré après la ligne repère (le bloc s'affiche à la fin si la ligne n'existe plus)
 export function fusionner(reel: Project, apercu: Apercu): Project {
-  const lignes = reel.body.split("\n");
+  let corps = reel.body;
+  for (const r of apercu.remplacer || []) {
+    if (!corps.includes(r.de)) console.warn(`[aperçu] texte à remplacer introuvable : ${r.de}`);
+    corps = corps.split(r.de).join(r.par);
+  }
+  const lignes = corps.split("\n");
   const i = lignes.findIndex((l) => l.trim() === apercu.insererApres);
   const bloc = ["", apercu.body, ""];
   if (i < 0) lignes.push(...bloc);
