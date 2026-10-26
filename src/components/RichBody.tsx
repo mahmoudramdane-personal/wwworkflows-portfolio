@@ -5,6 +5,7 @@ import { MediaAsset } from "@/lib/types";
 import AnimatedMedia from "./AnimatedMedia";
 import Eclate from "./Eclate";
 import Construction from "./Construction";
+import Familles from "./Familles";
 import LamesH2A from "./LamesH2A";
 import { idTitre } from "@/lib/titres";
 
@@ -44,6 +45,7 @@ export default function RichBody({ body, bodyMedia }: RichBodyProps) {
         if (segment.type === "miro") return renderMiro(segment.value, i);
         if (segment.type === "eclate") return renderEclate(segment.value, bodyMedia, i);
         if (segment.type === "construction") return renderConstruction(segment.value, bodyMedia, i);
+        if (segment.type === "familles") return renderFamilles(segment.value, bodyMedia, i);
         if (segment.type === "module") return renderModule(segment.value, i);
 
         // Markdown content
@@ -157,7 +159,7 @@ export default function RichBody({ body, bodyMedia }: RichBodyProps) {
 // --- Helpers ---
 
 interface Segment {
-  type: "markdown" | "media" | "youtube" | "video" | "miro" | "eclate" | "construction" | "module";
+  type: "markdown" | "media" | "youtube" | "video" | "miro" | "eclate" | "construction" | "familles" | "module";
   value: string;
 }
 
@@ -214,6 +216,13 @@ function splitMediaSegments(body: string): Segment[] {
     if (constructionMatch) {
       flushMd();
       segments.push({ type: "construction", value: constructionMatch[1] });
+      continue;
+    }
+
+    const famillesMatch = trimmed.match(/^\{\{familles:(.+?)\}\}$/);
+    if (famillesMatch) {
+      flushMd();
+      segments.push({ type: "familles", value: famillesMatch[1] });
       continue;
     }
 
@@ -342,6 +351,38 @@ function renderConstruction(value: string, bodyMedia: MediaAsset[], key: number)
     .filter((v) => v.images.length === etapes.length);
   if (!vues.length || !etapes.length) return null;
   return <Construction key={key} etapes={etapes} vues={vues} />;
+}
+
+// {{familles:nom|Phrase d'ouverture|Libellé#couleur:Phrase:Nombre|…}} : images nom-01.webp … (une famille seule)
+// et nom-tout.webp (le modèle entier) dans bodyMedia
+function renderFamilles(value: string, bodyMedia: MediaAsset[], key: number) {
+  const [nom, ...brut] = value.split("|").map((t) => t.trim());
+  const intro = brut[0] && !brut[0].includes("#") ? brut.shift() : undefined;
+  const image = (suffixe: string) =>
+    bodyMedia.find((m) => new RegExp(`^${nom}-${suffixe}\\.(png|webp)$`, "i").test(m.filename));
+  const tout = image("tout");
+  const familles = brut.map((t, k) => {
+    const [tete, phrase, nombre] = t.split(":").map((x) => x.trim());
+    const [libelle, couleur] = tete.split("#");
+    return {
+      libelle: libelle.trim(),
+      couleur: couleur ? `#${couleur.trim()}` : undefined,
+      phrase,
+      nombre: nombre || undefined,
+      image: image(String(k + 1).padStart(2, "0"))?.url,
+    };
+  });
+  if (!tout || !familles.length || familles.some((f) => !f.image)) return null;
+  return (
+    <Familles
+      key={key}
+      intro={intro}
+      familles={familles as (typeof familles[number] & { image: string })[]}
+      tout={tout.url}
+      largeur={tout.width || 1200}
+      hauteur={tout.height || 1200}
+    />
+  );
 }
 
 function renderMiro(value: string, key: number) {
