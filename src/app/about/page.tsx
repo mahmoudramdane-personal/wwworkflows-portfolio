@@ -27,7 +27,9 @@ export default async function AboutPage() {
           <div className="lg:col-span-7">
             <span className="mono text-gris">Studio</span>
             <h1 className="texte-net titre-large mt-6 text-[2.6rem] md:text-6xl lg:text-[4.1rem] leading-[1.02]">
-              Des systèmes, plutôt que des objets.
+              Des agences augmentées,
+              <br />
+              de l&apos;algorithme à l&apos;IA.
             </h1>
           </div>
           <div className="lg:col-span-5 lg:pt-14 space-y-5 text-xl leading-relaxed">

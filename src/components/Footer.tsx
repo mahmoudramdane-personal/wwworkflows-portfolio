@@ -164,7 +164,7 @@ export default function Footer() {
 
       <div className="w-full max-w-[1240px] mx-auto px-4 md:px-8 pt-16 pb-8 flex flex-wrap justify-between gap-3">
         <span className="mono text-white/70">&copy; {new Date().getFullYear()} WWWORKFLOWS</span>
-        <span className="mono text-white/70">Des systèmes, plutôt que des objets.</span>
+        <span className="mono text-white/70">Des agences augmentées, de l&apos;algorithme à l&apos;IA.</span>
       </div>
       </div>
     </footer>
