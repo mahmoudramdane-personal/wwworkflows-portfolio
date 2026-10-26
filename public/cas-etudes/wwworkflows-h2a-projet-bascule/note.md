@@ -1,121 +1,108 @@
 ---
-title: WWWorkflows × H2A — Projet Bascule
-subtitle: Système de façade paramétrique pour un immeuble mixte à l'entrée de Mons
+title: Des joysticks pour une façade
+subtitle: >-
+  Une façade qui se recompose seule quand les plans changent, pour un immeuble
+  mixte à l'entrée de Mons.
 client: H2A Ir Architecte & Associés
 year: 2025
 location: 'Mons, Belgique'
 category: facade-design
-status: Étude
+status: Esquisse
 collaborators: ''
 order: 3
 thumbnail: thumbnail.webp
 ---
-*Bascule* est un immeuble mixte situé à l'entrée de ville de Mons —. Quatre niveaux d'appartements/studios en superstructure, un rez-de-chaussée commercial animé par un grand abri bus sur toute la longueur de la parcelle. La parcelle elle-même est irrégulière, ce qui a conduit H2A Ir Architecte & Associés à un parti-pris d'une forme arrondie, souple, qui épouse les contraintes géométriques du terrain plutôt que de les subir.
 
-C'est dans ce contexte que WWWorkflows a été mandaté — non pas pour dessiner la façade, mais pour la retraduire algorithmiquement.
+{{construction:h2a-facade|Les dalles#8e8e8e:Le script part des niveaux et construit les planchers, étage par étage.|Les nez de dalle#B5B3AE:Les horizontales qui dessinent chaque étage.|Les fenêtres#3b5bdb:Plan A en bleu, plan B en magenta, en alternance d'un étage à l'autre.|Les garde-corps#8fb35a:Garde-corps des coursives et des terrasses.|Les rideaux#2A938B:Les rideaux semi-ouverts.|Les lames#c9c1b0:La double peau de lames verticales, 40 × 10 cm tous les 60 cm.}}
 
-{{media:bascule-intro.webp}}
+> Une agence dessine ses plans et sa façade en même temps, et les plans bougent encore. Voici un système de façade qui suit les plans au lieu d'être redessiné à chaque version.
 
----
-
-## Analyse initiale — lire le volume avant de l'habiller
-
-À la réception du modèle 3D et des plans d'architecte, notre premier réflexe a été d'analyser la façade non pas comme une surface, mais comme une condition. Trois éléments ont immédiatement structuré notre lecture :
-
-- Une **coursive extérieure** qui court sur les façades et crée une discontinuité dans l'enveloppe
-- Des **terrasses** accessibles depuis certains appartements, qui percent le volume de manière localisée
-- Des **portes-fenêtres de balcon** dont l'emplacement n'était pas encore figé — les architectes nous avaient prévenus : les plans allaient encore évoluer
-
-C'est cette dernière contrainte qui a orienté toute notre stratégie. Concevoir une façade sur des plans instables, c'est concevoir pour l'incertitude.
-
-{{media:analyse-plans.webp}}
+**Mission** : conseil en design computationnel · **Durée** : une dizaine de jours, mars 2025 · **Outils** : Rhino, Grasshopper, Lumion
 
 ---
 
-## Le système Joystick — paramétrer l'incertitude
+## Le contexte
 
-Plutôt que de modéliser une façade statique vouée à être refaite à chaque modification de plan, nous avons conçu un **système paramétrique à partir du volume plein**.
+À l'entrée est de Mons, sur la chaussée de Binche, un carrefour sépare la ville du campus universitaire. H2A y prépare un immeuble mixte : commerces et restauration au rez-de-chaussée, une crèche, un cabinet médical, des logements pour étudiants et jeunes actifs dans les étages, et un hub de mobilité avec son abri bus sur toute la longueur de la parcelle.
 
-Le principe : partir d'une enveloppe fermée et complète, puis la perforer dynamiquement à l'aide de ce que nous avons appelé des **joysticks** — des volumes cubiques paramétriques, calés sur les ouvertures du plan (portes-fenêtres, accès terrasses, passages de coursive). Chaque joystick est une interface entre le plan et la façade : déplacer une ouverture dans le plan, c'est déplacer automatiquement le joystick correspondant, et donc la perforation dans l'enveloppe.
+La parcelle est longue et étroite : 105 mètres sur 21, avec plus de trois mètres de dénivelé. Après une dizaine d'esquisses, l'agence a retenu un volume souple aux angles arrondis, quatre étages de logements au-dessus d'un socle vitré. Il lui restait à habiller ce volume.
 
-Le jeu de plein et de vide qui en résulte n'est pas arbitraire. Il est la traduction directe de la vie intérieure du bâtiment — les espaces découverts au bon endroit, jamais au mauvais.
+![[bascule-intro.webp]]
 
-{{media:joystick-schema.webp}}
+## La difficulté
 
-{{media:joystick-rendu.webp}}
+Une façade de logements traduit ce qui se passe derrière elle : une fenêtre ici parce qu'il y a une chambre, une terrasse là parce qu'un séjour s'y ouvre. Or les plans d'H2A n'étaient pas figés. L'agence nous avait prévenus : les portes-fenêtres et les terrasses allaient encore changer de place.
 
----
+Dessiner la façade à la main, c'était la redessiner à chaque nouvelle version des plans. Il fallait au contraire qu'elle se recompose seule quand un plan change.
 
-## Optimisation du ratio plein-vide
+![[analyse-plans.webp]]
 
-Ce qui est particulièrement puissant dans cette approche, c'est la **capacité à ajuster en temps réel** la proportion entre surface pleine et vide de la façade. Le script permet de faire varier ces paramètres et de visualiser immédiatement les conséquences — sur l'esthétique extérieure, sur la luminosité des espaces intérieurs, sur la lisibilité des niveaux depuis la rue.
+## Le système mis en place
 
-C'est aussi à cette étape que nous avons pu vérifier la cohérence entre l'enveloppe et la structure : chaque configuration générée respecte les contraintes de garde-corps, de profondeur de balcon et d'alignement structural.
+**1. Une enveloppe pleine, étage par étage.** Le script part des niveaux du bâtiment et construit une enveloppe fermée. Il en retire d'abord la bande des coursives et des terrasses, 2,20 mètres de profondeur, pour obtenir le volume réellement habité.
 
-{{media:ratio-plein-vide-1.webp}}
+![[joystick-1-planchers.webp]]
 
-{{media:ratio-plein-vide-2.webp}}
+**2. Des « volumes joystick » qui creusent la façade.** Ce sont de simples boîtes paramétriques, posées sur les ouvertures des plans : porte-fenêtre, accès à une terrasse, passage de coursive. Chaque boîte creuse l'enveloppe là où elle se trouve. Déplacer une ouverture dans le plan, c'est déplacer sa boîte, et la façade suit. Les vides ne sont jamais arbitraires : ils sont là où la vie intérieure les demande.
 
----
+![[joystick-2-volumes.webp]]
 
-## Exploration des variantes — tester avant de décider
+![[joystick-rendu.webp]]
 
-Avec une base paramétrique solide, la phase d'exploration devient un espace de liberté. À partir de rendus draft rapides, nous avons ouvert le champ des possibles avec H2A :
+**3. Un ratio plein / vide réglé en direct.** Avec 68 Number Sliders, on règle la taille des boîtes, leur nombre et la proportion entre surfaces pleines et ouvertes. Chaque réglage se voit aussitôt, en maquette comme en rendu, depuis la rue.
 
-- Lamelles en **rythme cassé aléatoire** ou en **quinconce**
-- Progressions **ascendantes ou descendantes** sur la hauteur du bâtiment
-- Tests de **couleurs flash** pour marquer l'entrée de ville
-- **Semi-transparences** pour jouer avec la profondeur visuelle
-- Fenêtres en **bandeau horizontal continu**
-- **Habillage spécifique des coursives** — parfois complètement ouvert, parfois masqué
-- Jeu sur les **profils des nez de dalle** pour sculpter les horizontales
+![[ratio-plein-vide-1.webp]]
 
-{{media:variantes-1.webp}}
+![[ratio-plein-vide-2.webp]]
 
-{{media:variantes-2.webp}}
+**4. Deux plans types en alternance.** H2A avait étudié deux versions du plan d'étage. Plutôt que d'en choisir une, nous les avons alternées : la première aux 1er et 3e étages, la seconde aux 2e et 4e.
 
----
+![[alternance-plans.webp]]
 
-## Le bardage — une décision ancrée dans la réalité
+Les ouvertures se décalent d'un étage à l'autre et dessinent un rythme en quinconce, sans qu'aucune ne soit placée pour l'effet.
 
-Après plusieurs réunions et allers-retours, le choix s'est arrêté sur un **système de bardage en façade par accroche mécanique**. La direction était claire — il restait à la préciser.
+![[alternance-elevation.webp]]
 
-L'enjeu principal : définir l'espacement et l'épaisseur des lames.
+**5. Une double peau de lames verticales.** Devant l'enveloppe, une peau de lames enveloppe tout le volume. Deux profondeurs de lames (30 et 40 cm) et deux espacements (60 et 80 cm) ont été comparés, chaque combinaison sur son propre calque, avec des vues depuis la coursive pour juger la lumière entre les lames. Le choix s'est arrêté sur des lames de 40 × 10 cm espacées de 60 cm.
 
-Ces paramètres ont été travaillés directement dans Grasshopper, avec des rendus de **vues depuis la coursive** qui se sont révélés déterminants. Ces vues intérieures montraient comment la lumière se comportait entre les lames selon leur profondeur, et comment l'ambiance changeait selon leur densité. Pour préserver une sensation d'espace et de luminosité à l'intérieur, nous avons opté pour **l'espacement le plus grand**.
+Dans le script, une lame n'est pas dessinée : c'est une profondeur, une épaisseur et un espacement. Changer un chiffre redessine toute la double peau. Essayez-le sur un fragment de la façade, à l'angle arrondi : les quatre combinaisons comparées sont en raccourci, et vous pouvez aller au-delà, jusqu'aux rythmes quinconce, aléatoire et crescendo.
 
-{{media:bardage-coursive.webp}}
+{{module:h2a-lames}}
 
-Le script a ensuite permis de générer automatiquement des **sous-géométries** à partir des éléments déjà modélisés. Les murs-rideaux existants sur les façades côté terrasses ont servi de base pour générer des **stores colorés avec extrusions variables**. Les garde-corps ont reçu des textures en **bois clair ajouré**, intégrées directement dans la modélisation, pour tester l'accord des matières.
+![[bardage-coursive.webp]]
 
-{{media:stores-gardes-corps.webp}}
+**6. Tout le reste généré par le même script.** Dalles et nez de dalle, fenêtres, garde-corps, rideaux semi-ouverts : chaque famille est bakée sur son calque, avec ses informations attachées. La maquette finale compte plus de 10 600 éléments rangés en 42 calques.
 
-{{media:materiaux-1.webp}}
+{{familles:h2a-familles|Plus de 10 600 éléments rangés en 42 calques.|Les dalles#8e8e8e:Les planchers et le socle, étage par étage.|Les nez de dalle#B5B3AE:Les horizontales qui dessinent chaque étage.|Les fenêtres#3b5bdb:Fenêtres et portes-fenêtres, chacune à la place d'une pièce du plan.|Les garde-corps#8fb35a:Les garde-corps des coursives et des terrasses.|Les rideaux#2A938B:Les rideaux semi-ouverts.|La double peau#c9c1b0:Les lames verticales, 40 × 10 cm tous les 60 cm.}}
 
-Nous avons également exploré des **variantes de matérialité par niveau** : bardage bois sur certaines faces, façade bicouche blanc sur d'autres — pour hiérarchiser les volumes et enrichir la lecture du bâtiment depuis l'espace public.
+## Les variantes explorées
 
-{{media:materiaux-facade.webp}}
+Une fois le système en place, explorer ne coûte presque rien. Avec H2A, nous avons ouvert plusieurs pistes à partir de rendus rapides : des couleurs vives pour marquer l'entrée de ville, des semi-transparences, des fenêtres en bandeau pour les chambres, des espacements de lames cassés, aléatoires ou en quinconce, des rythmes qui montent ou descendent avec la hauteur, une double peau propre aux coursives, un jeu sur le profil des nez de dalle.
 
-{{media:bascule.webp}}
+![[variantes-1.webp]]
 
----
+![[variantes-2.webp]]
 
-## Ce que cette mission démontre
+![[materiaux-facade.webp]]
 
-Ce Projet illustre une situation que nous rencontrons souvent : une agence qui avance sur deux fronts en parallèle — volume et plans — et qui a besoin d'un système de façade capable de **suivre sans être refait**.
+## Le résultat
 
-**Concevoir pour l'incertitude.** Le système joystick transforme l'instabilité des plans en paramètre gérable. Chaque changement d'ouverture se propage dans la façade sans intervention manuelle.
+En une dizaine de jours, H2A disposait de trois choses :
 
-**Explorer vite, décider bien.** Les rendus draft ont permis de tester une dizaine de directions en quelques sessions de travail. La décision finale sur le bardage et l'espacement des lames a été prise avec des données visuelles solides, pas par intuition seule.
+- une façade dont chaque ouverture correspond à une pièce, défendable devant la ville et le maître d'ouvrage ;
+- une série de rendus de jour et de nuit, sur les quatre façades, pour comparer les variantes ;
+- un système capable d'absorber les prochaines versions des plans sans que la façade soit redessinée.
 
-**La façade comme système vivant.** Ce qui a été livré à H2A n'est pas une image — c'est une maquette paramétrique entièrement reconfigurable, prête à absorber les modifications à venir en phase exécution.
+![[bascule.webp]]
 
-{{media:conclusion.webp}}
+## Ce que l'on en retient
 
----
+Quand les plans et la façade avancent en même temps, le temps se perd à refaire la façade, pas à la concevoir. En reliant chaque ouverture à une boîte que l'on peut déplacer, on a transformé l'incertitude des plans en un réglage. L'architecte garde la main sur ce qui compte : le rythme, la lumière, la matière.
 
-> *Note : Cette mission s'est déroulée en phase étude. La maquette paramétrique reste disponible pour accompagner la phase exécution et la consultation des entreprises.*
+**Des agences augmentées, de l'algorithme à l'IA.**
 
 ---
 
-*Étude de cas — WWWorkflows × H2A Ir Architecte & Associés — 2025*
+*Cette mission s'est déroulée en phase d'esquisse.*
+
+*Votre agence dessine une façade sur des plans qui bougent encore ? WWWORKFLOWS met en place avec vos équipes les outils et la méthode pour que la façade suive.*

@@ -1,203 +1,86 @@
 ---
-title: WWWorkflows × YDA — Tours Casablanca
-subtitle: Système de façade algorithmique pour trois tours à Casablanca Anfa
-client: Younes Diouri Architectes
+type: project
+title: 'Trois tours, une seule console'
+slug: yda-tours
+subtitle: >-
+  Trois semaines pour dessiner trois tours d'une même famille, avec quelques
+  réglages plutôt que trois façades.
+client: YDA Architect
 year: 2025
-location: 'Casablanca Anfa, Maroc'
+location: 'Casablanca, Maroc'
+order: 2
 category: facade-design
 status: Concours
-collaborators: ''
-order: 2
-thumbnail: vignette.jpg
+collaborators: YDA Architect
+thumbnail: 00-hero.webp
 ---
-{{media:gif-hero.webp}}
 
-## Contexte
+{{construction:yda-tours|Le site#e4e3e0:Le terrain et les bâtiments voisins.|Le sol#cbc2b1:Parvis et terrasses calepinés.|Les socles#8e897f:Les socles commerciaux qui portent les tours.|Noyaux et poteaux#2f5da8:Le noyau central et les poteaux de la grande tour.|Les dalles#4f82cf:Des planchers sculptés, découpés étage par étage.|Le vitrage#bfdde3:Le verre suit chaque nez de dalle.|Les montants#2a8584:La trame verticale de la façade, une teinte par tour.|Les obliques#5b4a94:Les éléments inclinés qui donnent son mouvement à la façade.|La peau#a82746:Les lames de la peau extérieure, réglées par le script.|Canopée et mobilier#7fae76:Arbres-canopée, parasols, fontaine et bancs du parvis.}}
 
-WWWorkflows a été mandaté par Younes Diouri pour une consultation en conception algorithmique sur un projet de tours à Casablanca.
+> Trois tours, un socle, un parvis, et trois semaines pour un concours. Plutôt que de dessiner trois façades, on a construit une console : quelques réglages qui les dessinent toutes.
 
-Le site — Lot 7.1 — est un pignon stratégique à l'intersection de quatre avenues. Les trois volumes s'organisent en cascade, créant un effet sculptural et signalétique depuis l'espace public traversant. La position d'angle offre une visibilité maximale depuis plusieurs directions simultanément : c'est autant une contrainte qu'une opportunité.
-
-{{media:thumbnail.webp}}
+**Mission** : conseil en design computationnel · **Durée** : 3 semaines, juin 2025, à distance · **Outils** : Rhino, Grasshopper, Ladybug, Archicad
 
 ---
 
-## Étape 1 — Analyse et nomenclature
+## Le contexte
 
-À la réception du modèle 3D, notre première action a été d'analyser la géométrie et d'établir une nomenclature de travail partagée :
+YDA Architect prépare un concours sur un lot de Casablanca-Anfa. Le programme demande une tour et des émergences. L'agence en fait trois tours de hauteurs différentes, d'environ 60, 33 et 25 mètres, posées sur un socle commun et reliées par un parvis planté.
 
-| Identifiant | Description |
-|---|---|
-| **Tour L** | La plus grande — point de départ de toute la conception |
-| **Tour M** | La moyenne |
-| **Tour S** | La plus petite |
-| **Socle** | Élément de jonction des trois masses — à traiter avec attention particulière |
+L'équipe de l'agence travaille sur Archicad. Elle a besoin d'un modèle qui tienne la forme, les façades, le socle et les espaces extérieurs, et qu'elle puisse reprendre pour ses plans et ses rendus. Le rendu du concours tombe trois semaines plus tard, et toute la mission se fait à distance.
 
-{{media:nomenclature-tours.webp}}
+![[01-trois-tours.webp]]
 
-Sur notre Miro Board partagé avec l'équipe YDA, nous avons reçu les premières références : des tours reprenant les grandes directives esthétiques souhaitées pour la façade extérieure. Nous avons analysé ces références pour distinguer les gestes répétitifs et dégager un esprit général.
+## La difficulté
 
-{{media:analyse-references.webp}}
+Une tour se dessine. Trois tours qui doivent parler la même langue, beaucoup moins.
 
----
+Chaque tour a sa hauteur, ses retraits et ses découpes. Leurs façades doivent pourtant appartenir à une même famille. Le mur-rideau, ses montants et ses brise-soleil doivent suivre chaque nez de dalle, sur près de deux mille panneaux. Et pendant un concours, tout bouge : la hauteur sous plafond, l'épaisseur des dalles, la coupe d'un volume. Un modèle dessiné à la main aurait été à refaire à chaque échange.
 
-## Étape 2 — Form Finding
+## L'idée : une console
 
-La déclinaison volumétrique s'est construite à partir des contraintes réglementaires et programmatiques du site :
+Au lieu de dessiner trois façades, on a dessiné une console. C'est un seul script Grasshopper, avec une poignée de réglages nommés en français, que l'agence peut lire sans connaître le code : « Largeur des panneaux en verre », « Pourcentage des panels obliques », « Pourcentage de fluctuation », « Extrusion des lames ».
 
-- Hauteur maximale à ne pas dépasser
-- SHOB à respecter
-- SHON (Surface de Plancher)
-- Analyse des dimensions fonctionnelles par niveau
-- Reculs par rapport aux zones mitoyennes
+On tourne un réglage et les trois tours changent ensemble. Elles restent de la même famille, chacune à son échelle.
 
-Dès les premières réunions, un geste dialectique fort au niveau du coin a été identifié comme point de départ : **l'espace tronqué**. C'est à partir de cette découpe que la composition des trois tours prend son sens.
+![[02-console-obliques.mp4]]
 
-Il a également été établi que la façade serait composée de verre et de brise-soleil à déclinaisons différentes. L'effet de découpe aux derniers étages a inspiré l'idée d'un shift latéral des meneaux et des murs-rideaux — pour donner plus de dynamisme au volume, en commençant par la tour L.
+## Le système mis en place
 
-{{media:form-finding.webp}}
+**1. Des volumes réglés, pas dessinés.** Un générateur de niveaux construit les dalles, les planchers vitrés et les socles des trois tours. Il gère aussi les découpes qui sculptent leurs silhouettes. Les hauteurs du rez-de-chaussée, des étages et des acrotères se règlent avec des Number Sliders. Quand l'agence a demandé de passer les dalles de 30 à 20 centimètres, il a suffi d'un réglage.
 
----
+**2. Des façades qui sortent d'un même script.** La console de façade compte environ 1 500 components et 70 Number Sliders. Elle génère, pour chaque tour, le vitrage, les montants, des obliques réparties au hasard selon un pourcentage, puis les lames de la peau extérieure. Les variantes étudiées, coupe lisse ou décalée, avec ou sans lames verticales, panneaux de 1,40 mètre avec ou sans panneaux de rive, se comparent sans rien redessiner.
 
-## Étape 3 — Système façade algorithmique
+![[04-deux-tours.webp]]
 
-### Clustering des panneaux de verre
+**3. Un parvis tiré au sort, puis choisi.** D'autres scripts génèrent la canopée d'arbres, les parasols et le calepinage du parvis. Le calepinage est tiré au hasard plusieurs fois, puis on retient le motif qui sert le mieux le projet. Les bancs, la fontaine sèche et les rampes y trouvent leur place.
 
-Avant d'entamer la double peau, une analyse des géométries de verre était nécessaire. Le script développé sur Grasshopper nous a permis de **clusteriser et grouper les panneaux de verre par niveau**, à partir des plans fournis par l'équipe YDA.
+![[05-parvis-tirages.mp4]]
 
-Un traitement différencié a été prévu pour les zones tronquées : les dalles dans ces espaces inclinés reçoivent un système façade distinct du reste du volume.
+**4. Un modèle rangé pour être partagé.** Chaque famille d'éléments est bakée sur son propre calque, tour par tour : dalles, vitrage, montants, obliques, peau, canopée, mobilier. Elle porte un identifiant de matériau pour les moteurs de rendu. Le modèle final compte près de 12 700 éléments répartis en 83 calques, avec un document qui explique son arborescence. Les itérations de peau sont gardées pour la phase suivante.
 
-{{media:panneaux-clustering.webp}}
+{{familles:yda-familles|12 700 éléments sur 83 calques.|Le site#e4e3e0:Le terrain et les bâtiments voisins.|Le sol#cbc2b1:Parvis et terrasses calepinés.|Les socles#8e897f:Les socles commerciaux qui portent les tours.|Noyaux et poteaux#2f5da8:Le noyau central et les poteaux de la grande tour.|Les dalles#4f82cf:Des planchers sculptés, découpés étage par étage.|Le vitrage#bfdde3:Le verre suit chaque nez de dalle.:≈ 1 900|Les montants#2a8584:La trame verticale de la façade, une teinte par tour.:≈ 1 800|Les obliques#5b4a94:Les éléments inclinés, répartis selon un pourcentage réglé dans la console.:≈ 950|La peau#a82746:Les lames de la peau extérieure, réglées par le script.:≈ 1 800|Canopée et mobilier#7fae76:Arbres-canopée, parasols, fontaine et bancs du parvis.}}
 
-### La double peau paramétrique
+**5. Un passage vers l'outil de l'agence.** Les épaisseurs de dalles sont alignées sur celles d'Archicad. Un script tire des maquettes les contours des tours en DWG, pour les plans. Le modèle est livré en Rhino 7 et 8, et une maquette est préparée pour l'impression 3D.
 
-La double peau émerge directement des murs-rideaux. Les meneaux verticaux constituent la colonne vertébrale du système : **si les panneaux de verre changent, les meneaux et la double peau suivent automatiquement.**
+## Le résultat
 
-Ce principe de dépendance paramétrique est au cœur de la valeur de notre approche : chaque modification du volume hôte se propage à l'ensemble du système façade, sans intervention manuelle.
+Trois semaines après le premier échange, YDA Architect disposait de trois choses :
 
-La double peau est composée de panneaux d'aluminium d'épaisseurs et de largeurs variables qui sortent de la façade — créant du dynamisme pour l'ensemble volumétrique.
+- trois tours d'une même famille, aux façades réglables ;
+- un parvis et une canopée dessinés avec le même soin que les tours ;
+- un modèle 3D complet et rangé, prêt pour le rendu et la production.
 
-{{media:double-peau.webp}}
+Surtout, l'agence a gardé la main jusqu'au rendu. Chaque demande de sa part s'est traduite par un réglage de la console, pas par un nouveau dessin.
 
----
+![[07-facade.webp]]
 
-## Étape 4 — Itérations de façade
+## Ce que l'on en retient
 
-### Itération 1 — Les trois gestes fondateurs
+Quand trois bâtiments doivent parler la même langue, il vaut mieux écrire la langue que les bâtiments. Une console bien nommée met le système entre les mains de l'architecte. Il n'a plus besoin d'un spécialiste pour essayer une idée : il tourne un réglage et regarde.
 
-La première itération a établi les trois actions de base appliquées à la façade :
-
-1. **Découpage** — Division par largeurs spécifiques et mur-rideau
-2. **Shifting** — Déplacement latéral des meneaux par niveau pour créer le dynamisme voulu : un effet de tremblement ou de fausse quinconce
-3. **Extrusion** — Extension des meneaux vers l'extérieur pour donner un effet écaillé à la façade
-
-{{media:iterations-actions.webp}}
-
-### Itération 2 — Introduction des obliques
-
-L'ajout d'éléments obliques a enrichi le système en créant trois typologies de panneaux pour le mur-rideau :
-
-1. **Panneau fixe**
-2. **Panneau ouvrant**
-3. **Panneau oblique** — qui, une fois miroité, offre une lecture supplémentaire et enrichit la façade
-
-Nous avons également cherché à densifier la partie tronquée du volume pour lui donner plus de poids, tout en allégeant progressivement vers le bas pour créer un maillage descendant.
-
-{{media:typologies-panneaux.webp}}
-{{media:gif-iteration-1.webp}}
-{{media:gif-iteration-2.webp}}
-
-### Rationalisation des brise-soleil
-
-Les brise-soleil ont été travaillés en **gradients définis par l'élévation** — leur profondeur varie en fonction de la hauteur par rapport au sol. Une étude analytique de l'apport solaire a été réalisée avec **Ladybug** pour visualiser leur impact sur la volumétrie, notamment pour la façade sud.
-
-Un système rotatif sur axe a été exploré mais écarté pour la complexité structurelle qu'il impliquait. Les tolérances d'extrusion ont été encadrées par un minimum et un maximum définis pour tenir compte des contraintes de vent.
-
-{{media:brise-soleil-analyse.webp}}
+**Des agences augmentées, de l'algorithme à l'IA.**
 
 ---
 
-## Étape 5 — Visualisation et validation
-
-Pour ancrer les décisions dans la réalité, nous avons utilisé **Lumion** et des outils d'intelligence artificielle pour générer des images de référence. L'objectif était de se projeter dans le rendu final et de valider certains choix de composition avant de les figer.
-
-C'est à cette étape que nous avons décidé d'affiner les découpes tronquées de la tour L pour lui donner plus d'inclinaison au niveau du pignon. Une nouvelle coupure a également été ajoutée en bas du socle, visible depuis l'intersection des quatre rues.
-
-La modélisation a également intégré le positionnement des poteaux structurels, rationalisés en rangs sur la base des plans de dalles.
-
-{{media:visualisation-process.webp}}
-{{media:hero.png}}
-
----
-
-## Étape 6 — Coordination entre équipes et gel du volume
-
-### Un problème de SHON en fin de parcours
-
-Alors que nous approchions de la phase finale, un problème de surface a été détecté malgré le gel du volume. La SHON ne correspondait plus aux exigences — le volume devait changer à nouveau.
-
-**C'est précisément ici que la valeur du système algorithmique s'est confirmée.** Refaire l'ensemble manuellement aurait représenté plusieurs jours de travail. Grâce à notre script Grasshopper, il suffisait de redessiner les volumes à partir des nouvelles dimensions, de les alimenter dans le script, et de valider la SHON avec l'équipe.
-
-### Deux équipes en parallèle
-
-Le projet était organisé en deux équipes distinctes :
-
-- **Équipe Plans (2D)** — planchers, fonctionnalité, noyaux
-- **Notre équipe (Volume + Façade)** — volumétrie et système façade algorithmique
-
-Le problème fonctionnel s'est cristallisé aux derniers étages : là où la coupe inclinée créait des espaces inutilisables autour des noyaux. L'équipe plans nous a transmis les nouvelles largeurs à intégrer, ce qui a généré une brisure différente du volume au niveau du pignon.
-
-**Le protocole de communication inter-équipes :** les contours de dalles de chaque niveau ont été exportés automatiquement par Grasshopper en format DWG et transmis à l'équipe plans. Une méthode simple, sans ambiguïté, pour synchroniser deux équipes travaillant sur des logiciels différents.
-
-{{media:coordination-volume.webp}}
-{{media:plans-niveaux.webp}}
-{{media:export-niveaux.webp}}
-{{media:transfert-donnees.webp}}
-
----
-
-## Étape 7 — Socle et espace public
-
-Le socle est l'élément qui unifie les trois tours dans une seule lecture urbaine. Son traitement devait être cohérent avec la logique façade tout en répondant aux enjeux de l'espace public traversant.
-
-### Calepinage algorithmique
-
-Un système de calepinage automatisé a été développé pour le sol du socle. Le principe repose sur un **hotspot** — un point librement déplaçable dans la zone — qui détermine l'emplacement de la fontaine sèche. Le calepinage change de teinte et de granulation en fonction de la distance à ce point. Un gradient aléatoire a également été appliqué pour varier le texturing de la zone.
-
-{{media:gif-calepinage.webp}}
-{{media:gif-fontaine.webp}}
-
-### Végétation et mobilier urbain
-
-Les plantations ont été intégrées à partir de la grille générée par le calepinage. Les canopées en parasol, de hauteurs différentes, ont été positionnées selon cette même logique de gradient.
-
-{{media:vegetation-canopees.webp}}
-
-### Terrasses accessibles
-
-Un traitement spécifique a été appliqué aux terrasses accessibles des tours L, M et S — espaces de détente et de restauration. Un **ruban continu au niveau des rez-de-chaussée** englobe les trois masses, dessine les escaliers d'accès aux terrasses et réduit l'exposition solaire directe.
-
-{{media:ruban-rdc-1.webp}}
-{{media:ruban-rdc-2.webp}}
-
----
-
-## Ce que cette mission démontre
-
-Ce projet illustre la valeur concrète du Computational Design as a Service dans le contexte d'un concours à haute pression :
-
-**Adaptabilité sans coût supplémentaire.** Lorsque le volume a dû changer en cours de projet, le script a absorbé les modifications en quelques heures. Sans système paramétrique, c'est plusieurs jours de remodélisation manuelle.
-
-**Coordination fluide entre équipes.** Le script génère automatiquement les livrables inter-équipes — contours DWG par niveau — éliminant les erreurs de communication entre équipe plans et équipe volume.
-
-**Exploration rapide et décisions fondées.** Double peau, brise-soleil, typologies de panneaux — chaque décision a été testée visuellement avant d'être figée, accélérant la prise de décision lors des réunions.
-
-**Scalabilité du système.** Ce qui a été développé pour la tour L a pu être décliné sur les tours M et S avec une cohérence formelle garantie par le même script.
-
----
-
-> *Note : Cette mission s'est déroulée en phase concours. La rationalisation et l'optimisation structurelle complètes sont accessibles en phase exécution, une fois le projet primé.*
-
----
-
-*Étude de cas — WWWorkflows × YDA — Juin 2025*
+*Votre agence prépare un concours avec plusieurs bâtiments, ou une façade à décliner ? WWWORKFLOWS met en place avec vos équipes les outils et la méthode pour garder la main sur la forme jusqu'au rendu.*

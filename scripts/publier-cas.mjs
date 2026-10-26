@@ -2,6 +2,7 @@
 // lu par le site au build (plus de Contentful depuis le 26.10.26). Rien ne part en ligne avant le git push.
 //   npm run publier-cas -- <slug>              (refuse d'écraser un cas déjà publié)
 //   npm run publier-cas -- <slug> --remplacer  (remplace un cas publié ; l'ancienne version reste dans l'historique git)
+//   npm run publier-cas -- <slug> --vers <slug-en-ligne> --remplacer  (nouvelle version sous l'adresse déjà en ligne)
 // Images converties en WebP (GIF → WebP animé), largeur limitée ; vidéos copiées telles quelles ;
 // note.md réécrite avec les nouveaux noms (![[x.png]], ![](./attachments/x.png), {{media:x.png}}, thumbnail, heroImage).
 import fs from "fs";
@@ -12,13 +13,21 @@ import matter from "gray-matter";
 const MAX_CORPS_PX = 1600; // images du texte (affichées jusqu'à ~1300 px)
 const MAX_UNE_PX = 2400; // vignette et image principale
 
-const [slug, option] = process.argv.slice(2);
+// --vers <autre-slug> : publie l'aperçu sous une autre adresse (ex. remplacer un cas déjà en ligne en gardant son URL)
+const args = process.argv.slice(2);
+const slug = args[0];
+const option = args.includes("--remplacer") ? "--remplacer" : undefined;
+const vers = args.includes("--vers") ? args[args.indexOf("--vers") + 1] : slug;
 if (!slug || !/^[a-z0-9-]+$/.test(slug)) {
   console.error("Usage : npm run publier-cas -- <slug>");
   process.exit(1);
 }
 const source = path.join("public", "apercu", slug);
-const cible = path.join("public", "cas-etudes", slug);
+if (!vers || !/^[a-z0-9-]+$/.test(vers)) {
+  console.error("--vers attend un slug");
+  process.exit(1);
+}
+const cible = path.join("public", "cas-etudes", vers);
 if (!fs.existsSync(path.join(source, "note.md"))) {
   console.error(`Pas d'aperçu : ${source}/note.md`);
   process.exit(1);
