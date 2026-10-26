@@ -66,6 +66,13 @@ export async function getProjects(): Promise<Project[]> {
 export async function getProjectBySlug(
   slug: string
 ): Promise<Project | null> {
+  // Aperçu local (public/apercu/<slug>/note.md) : en développement seulement, avant Contentful
+  if (process.env.NODE_ENV !== "production") {
+    const { lireApercu } = await import("./apercu");
+    const apercu = lireApercu(slug);
+    if (apercu) return apercu;
+  }
+
   if (!client) {
     const { mockProjects } = await import("@/data/projects");
     return mockProjects.find((p) => p.slug === slug) || null;

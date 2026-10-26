@@ -45,3 +45,6 @@ next-env.d.ts
 
 # Windows reserved device name (created accidentally)
 nul
+
+# Aperçus locaux des cas d'études (src/lib/apercu.ts) : jamais versionnés
+/public/apercu/
