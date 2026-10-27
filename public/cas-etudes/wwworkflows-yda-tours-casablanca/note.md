@@ -12,7 +12,7 @@ order: 2
 category: facade-design
 status: Concours
 collaborators: YDA Architect
-thumbnail: 00-hero-trois-tours-jour.webp
+thumbnail: carte-trois-tours-rue.webp
 heroImage: 00-hero-trois-tours-jour.webp
 ---
 
