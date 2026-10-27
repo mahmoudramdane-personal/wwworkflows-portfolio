@@ -18,6 +18,7 @@ export interface Project {
   collaborators?: string;
   thumbnail?: string;
   heroImage?: string;
+  heroRatio?: number; // largeur / hauteur de l'image principale
   body: string;
   images: string[];
   bodyMedia: MediaAsset[];

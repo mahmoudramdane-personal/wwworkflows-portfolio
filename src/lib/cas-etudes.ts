@@ -54,9 +54,11 @@ function lireDossier(base: string, slug: string): Apercu | null {
       bodyMedia.push({ url: u, filename: nom, contentType: "video/mp4" });
       return `{{video:${nom}}}`;
     }
-    return `{{media:${nom}}}`;
+    // ![[x.webp|Une légende]] : le texte après | devient la légende de la figure (une largeur seule, ![[x.png|500]], est ignorée)
+    const legende = fichier.split("|").slice(1).join("|").trim();
+    return legende && !/^\d+(x\d+)?$/.test(legende) ? `{{media:${nom}|${legende}}}` : `{{media:${nom}}}`;
   };
-  // Syntaxe Obsidian acceptée : ![[x.png]], ![[x.png|500]], ![](./attachments/x.png)
+  // Syntaxe Obsidian acceptée : ![[x.png]], ![[x.png|500]], ![[x.png|Légende]], ![](./attachments/x.png)
   body = body
     // [ \t]* et non \s* : en mode /m, \s avalerait les sauts de ligne et collerait deux images à la suite
     .replace(/^[ \t]*!\[\[([^\]]+)\]\][ \t]*$/gm, (_, f) => media(f))
@@ -94,6 +96,12 @@ function lireDossier(base: string, slug: string): Apercu | null {
     collaborators: (data.collaborators as string) || "",
     thumbnail: image(data.thumbnail) || image(data.heroImage),
     heroImage: image(data.heroImage),
+    heroRatio: (() => {
+      const nom = typeof data.heroImage === "string" ? path.basename(data.heroImage) : "";
+      const f = ["", "attachments"].map((sous) => path.join(dossier, sous, nom)).find((x) => nom && fs.existsSync(x));
+      const t = f ? tailleImage(f) : null;
+      return t ? t.largeur / t.hauteur : undefined;
+    })(),
     body,
     images: Array.isArray(data.projectImages) ? data.projectImages.map(image).filter((x): x is string => !!x) : [],
     bodyMedia,

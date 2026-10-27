@@ -41,6 +41,7 @@ export default function RichBody({ body, bodyMedia }: RichBodyProps) {
     <div>
       {segments.map((segment, i) => {
         if (segment.type === "media") return renderMedia(segment.value, bodyMedia, i);
+        if (segment.type === "paire") return renderPaire(segment.value, bodyMedia, i);
         if (segment.type === "youtube") return renderYouTube(segment.value, i);
         if (segment.type === "video") return renderVideo(segment.value, bodyMedia, i);
         if (segment.type === "miro") return renderMiro(segment.value, i);
@@ -161,7 +162,7 @@ export default function RichBody({ body, bodyMedia }: RichBodyProps) {
 // --- Helpers ---
 
 interface Segment {
-  type: "markdown" | "media" | "youtube" | "video" | "miro" | "eclate" | "construction" | "familles" | "vues" | "module";
+  type: "markdown" | "media" | "paire" | "youtube" | "video" | "miro" | "eclate" | "construction" | "familles" | "vues" | "module";
   value: string;
 }
 
@@ -183,6 +184,13 @@ function splitMediaSegments(body: string): Segment[] {
     if (mediaMatch) {
       flushMd();
       segments.push({ type: "media", value: mediaMatch[1] });
+      continue;
+    }
+
+    const paireMatch = trimmed.match(/^\{\{paire:(.+?)\}\}$/);
+    if (paireMatch) {
+      flushMd();
+      segments.push({ type: "paire", value: paireMatch[1] });
       continue;
     }
 
@@ -249,7 +257,10 @@ function splitMediaSegments(body: string): Segment[] {
   return segments;
 }
 
-function renderMedia(filename: string, bodyMedia: MediaAsset[], key: number) {
+function renderMedia(valeur: string, bodyMedia: MediaAsset[], key: number) {
+  // {{media:nom|légende}} : la légende s'affiche après « FIG. 0N »
+  const [filename, ...reste] = valeur.split("|");
+  const legende = reste.join("|").trim();
   const asset = bodyMedia.find(
     (m) => m.filename === filename || m.url.endsWith(filename)
   );
@@ -258,21 +269,51 @@ function renderMedia(filename: string, bodyMedia: MediaAsset[], key: number) {
   const isGif =
     asset.contentType === "image/gif" || filename.endsWith(".gif");
 
+  // Une image verticale seule reste à 640 px de large, pour ne pas occuper plusieurs écrans
+  const verticale = !!asset.width && !!asset.height && asset.height > asset.width;
+
   return (
-    <figure key={key} className="figure-cas">
-      <div className="relative overflow-hidden">
+    <figure key={key} className="figure-cas" data-legende={legende ? ` · ${legende}` : undefined}>
+      <div className={`relative overflow-hidden ${verticale ? "max-w-[640px] mx-auto" : ""}`}>
         {isGif ? (
           <AnimatedMedia src={asset.url} alt={filename} />
         ) : (
           <Image
             src={asset.url}
-            alt={filename}
+            alt={legende || filename}
             width={asset.width || 1600}
             height={asset.height || 900}
             className="w-full h-auto"
             sizes="(max-width: 940px) calc(100vw - 32px), 940px"
           />
         )}
+      </div>
+    </figure>
+  );
+}
+
+// {{paire:a.webp|b.webp|Légende commune}} : deux images côte à côte (l'une sous l'autre sur téléphone), une seule figure
+function renderPaire(valeur: string, bodyMedia: MediaAsset[], key: number) {
+  const [a, b, ...reste] = valeur.split("|").map((x) => x.trim());
+  const legende = reste.join("|").trim();
+  const images = [a, b]
+    .map((nom) => bodyMedia.find((m) => m.filename === nom || m.url.endsWith(nom)))
+    .filter((m): m is MediaAsset => !!m);
+  if (!images.length) return null;
+  return (
+    <figure key={key} className="figure-cas" data-legende={legende ? ` · ${legende}` : undefined}>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        {images.map((m) => (
+          <Image
+            key={m.url}
+            src={m.url}
+            alt={legende || m.filename}
+            width={m.width || 1200}
+            height={m.height || 1600}
+            className="w-full h-auto"
+            sizes="(max-width: 640px) calc(100vw - 32px), 470px"
+          />
+        ))}
       </div>
     </figure>
   );

@@ -92,7 +92,11 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
       {/* Image principale */}
       {project.heroImage && (
         <section className="max-w-[1240px] mx-auto px-4 md:px-8 pt-10 md:pt-14">
-          <div className="relative aspect-[16/9] overflow-hidden bg-trait">
+          {/* Proportions de l'image elle-même, entre 4:3 et 21:9, pour ne pas couper un rendu */}
+          <div
+            className="relative overflow-hidden bg-trait"
+            style={{ aspectRatio: String(Math.min(Math.max(project.heroRatio ?? 16 / 9, 4 / 3), 21 / 9)) }}
+          >
             <Image src={project.heroImage} alt={project.title} fill className="object-cover" priority sizes="(max-width: 1240px) 100vw, 1176px" />
           </div>
         </section>

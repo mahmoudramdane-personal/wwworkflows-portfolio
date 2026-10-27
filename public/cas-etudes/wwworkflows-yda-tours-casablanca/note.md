@@ -12,7 +12,8 @@ order: 2
 category: facade-design
 status: Concours
 collaborators: YDA Architect
-thumbnail: 00-hero.webp
+thumbnail: 00-hero-trois-tours-jour.webp
+heroImage: 00-hero-trois-tours-jour.webp
 ---
 
 {{construction:yda-tours|Le site#e4e3e0:Le terrain et les bâtiments voisins.|Le sol#cbc2b1:Parvis et terrasses calepinés.|Les socles#8e897f:Les socles commerciaux qui portent les tours.|Noyaux et poteaux#2f5da8:Le noyau central et les poteaux de la grande tour.|Les dalles#4f82cf:Des planchers sculptés, découpés étage par étage.|Le vitrage#bfdde3:Le verre suit chaque nez de dalle.|Les montants#2a8584:La trame verticale de la façade, une teinte par tour.|Les obliques#5b4a94:Les éléments inclinés qui donnent son mouvement à la façade.|La peau#a82746:Les lames de la peau extérieure, réglées par le script.|Canopée et mobilier#7fae76:Arbres-canopée, parasols, fontaine et bancs du parvis.}}
@@ -29,7 +30,7 @@ YDA Architect prépare un concours sur un lot de Casablanca-Anfa. Le programme d
 
 L'équipe de l'agence travaille sur Archicad. Elle a besoin d'un modèle qui tienne la forme, les façades, le socle et les espaces extérieurs, et qu'elle puisse reprendre pour ses plans et ses rendus. Le rendu du concours tombe trois semaines plus tard, et toute la mission se fait à distance.
 
-![[01-trois-tours.webp]]
+![[01-trois-tours-avenue.webp|Trois hauteurs, une même famille de façades, posées sur un socle commun.]]
 
 ## La difficulté
 
@@ -53,9 +54,13 @@ On tourne un réglage et les trois tours changent ensemble. Elles restent de la 
 
 ![[04-deux-tours.webp]]
 
+![[03-tour-nuit.webp|La nuit, les lames de la peau dessinent la silhouette de la grande tour.]]
+
 **3. Un parvis tiré au sort, puis choisi.** D'autres scripts génèrent la canopée d'arbres, les parasols et le calepinage du parvis. Le calepinage est tiré au hasard plusieurs fois, puis on retient le motif qui sert le mieux le projet. Les bancs, la fontaine sèche et les rampes y trouvent leur place.
 
 ![[05-parvis-tirages.mp4]]
+
+{{paire:05-parvis-parasols.webp|06-terrasse-canopee.webp|Le parvis entre les tours, sous la canopée de parasols, et une terrasse du socle.}}
 
 **4. Un modèle rangé pour être partagé.** Chaque famille d'éléments est bakée sur son propre calque, tour par tour : dalles, vitrage, montants, obliques, peau, canopée, mobilier. Elle porte un identifiant de matériau pour les moteurs de rendu. Le modèle final compte près de 12 700 éléments répartis en 83 calques, avec un document qui explique son arborescence. Les itérations de peau sont gardées pour la phase suivante.
 
@@ -73,6 +78,8 @@ Trois semaines après le premier échange, YDA Architect disposait de trois chos
 
 Surtout, l'agence a gardé la main jusqu'au rendu. Chaque demande de sa part s'est traduite par un réglage de la console, pas par un nouveau dessin.
 
+![[08-bureau-facade-interieur.webp|La façade vue de l'intérieur : obliques et montants cadrent la vue sur le parvis.]]
+
 ![[07-facade.webp]]
 
 ## Ce que l'on en retient
@@ -82,5 +89,7 @@ Quand trois bâtiments doivent parler la même langue, il vaut mieux écrire la 
 **Des agences augmentées, de l'algorithme à l'IA.**
 
 ---
+
+*Rendus photoréalistes : YDA Architect.*
 
 *Votre agence prépare un concours avec plusieurs bâtiments, ou une façade à décliner ? WWWORKFLOWS met en place avec vos équipes les outils et la méthode pour garder la main sur la forme jusqu'au rendu.*
