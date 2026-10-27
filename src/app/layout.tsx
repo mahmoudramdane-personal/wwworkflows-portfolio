@@ -26,7 +26,7 @@ export const metadata: Metadata = {
     template: "%s — WWWORKFLOWS",
   },
   description:
-    "Un partenaire créatif pour les architectes et designers. Nous développons des workflows algorithmiques, avec le design computationnel et l'intelligence artificielle, qui aident à imaginer, modéliser et produire.",
+    "Un partenaire technologique pour les agences d'architecture augmentées. Nous développons des workflows algorithmiques, avec le design computationnel et l'intelligence artificielle, qui aident à imaginer, modéliser et produire.",
   openGraph: {
     siteName: "WWWORKFLOWS",
     locale: "fr_FR",

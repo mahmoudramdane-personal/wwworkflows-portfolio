@@ -19,7 +19,7 @@ export default async function Home() {
           <div className="lg:col-span-7">
             <span className="mono text-gris">WWWORKFLOWS · Design computationnel et IA</span>
             <h1 className="texte-net titre-large mt-6 text-[2.6rem] leading-[1.04] md:text-6xl lg:text-[4.1rem]">
-              Un partenaire créatif pour les architectes et designers.
+              Un partenaire technologique pour les agences d&apos;architecture augmentées.
             </h1>
             <p className="mt-8 text-lg md:text-xl leading-relaxed text-gris">
               Nous développons des workflows algorithmiques, en utilisant le{" "}
